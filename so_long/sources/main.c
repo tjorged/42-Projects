@@ -35,16 +35,16 @@ int main()
 	t_mlx		mlx;
 	t_asset		back;
 	
- 	back.path = "./assets/test.xpm";
+ 	back.path = "./assets/map/teste.xpm";
 	mlx.mlx = mlx_init();
 	if (!mlx.mlx)
 		return (1);
-	mlx.window = mlx_new_window(mlx.mlx, 1024, 1024, "so_long");
+	mlx.window = mlx_new_window(mlx.mlx, 1920, 1080, "so_long");
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
 	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &keylog, &mlx);
 	back.img = mlx_xpm_file_to_image(mlx.mlx, back.path, &back.w, &back.h);
-	mlx_put_image_to_window(mlx.mlx, mlx.window, back.img, 512, 512);
+	mlx_put_image_to_window(mlx.mlx, mlx.window, back.img, 0, 0);
 	mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
 	mlx_loop(mlx.mlx);
 	return (0);
