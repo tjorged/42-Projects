@@ -1,10 +1,10 @@
 NAME= so_long
 
 CC= cc
-CFLAGS= -Wall -Werror -Wextra
+CFLAGS= -g
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= main.c get_next_line.c get_next_line_utils.c
+SOURCES= mapper.c error_handler.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))
@@ -12,25 +12,31 @@ OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))
 MLX_DIR= ./mlx
 MLX= $(MLX_DIR)/libmlx_Linux.a -lXext -lX11 -lm -lz
 
+LIBFT_DIR= ./libft
+LIBFT= $(LIBFT_DIR)/libft.a
+
 all: $(NAME)
 
-$(NAME): $(OBJ) $(MLX) 
-	$(CC) $(CFLAGS) $(OBJ) -o $@ $(MLX)
+$(NAME): $(OBJ) $(MLX) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJ) -o $@ $(MLX) $(LIBFT)
 
 $(OBJ_DIR)/%.o: sources/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(MLX):
-	cd $(MLX_DIR) && make
+	$(MAKE) -C $(MLX_DIR)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
 clean:
 	rm -rf $(OBJ_DIR)
-	cd $(MLX_DIR) && make clean
+	$(MAKE) -C $(MLX_DIR) clean
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME)
-	cd $(MLX_DIR) && rm -f libmlx_Linux.a
 	
 re: fclean all
 
