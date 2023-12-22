@@ -4,7 +4,7 @@ CC= cc
 CFLAGS= -g
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= mapper.c error_handler.c
+SOURCES= mapper.c error_handler.c map_checker.c map_utils.c map_transformer.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))

@@ -14,7 +14,14 @@ typedef struct mlx
 typedef struct map
 {
 	char	**map;
+	char	**collisions;
 	int	collect;
+	int	row_count;
+	int	lenght;
+	int	exit_y;
+	int	exit_x;
+	int	player_y;
+	int	player_x;
 } t_map;
 
 typedef struct asset
@@ -25,10 +32,12 @@ typedef struct asset
 	int	h;
 } t_asset;
 
-void	file_name_checker(char *file);
-void	**mapper(char *file, t_map *info);
 void	delete_map(char **map, char mode);
-void	wall_checker(char **map, int y, int x, int max_y);
-void	char_checker(char **map, int y, int x, t_map *info);
+void	coord_finder(t_map *map);
+void	**mapper(char *file, t_map *map);
+void	map_checker(t_map *map);
+void	singles_handler(char *current, int corners, int sides);
+void	map_transformer(t_map *map);
+int	flor(char current);
 
 #endif
