@@ -12,148 +12,129 @@
 
 #include "so_long.h"
 
-static void	function_caller()
+static void	walls_n_doors(t_map *map, int y, int x, char mode)
 {
-	while (map->map[++j])
+	if (mode == 'w')
 	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
-		{
-			if (flor(map->map[j][i]))
-				walls(map, j, i);
-		}
+		if (map->map[y][x + 1] == '1')
+			map->map[y][x + 1] = 6;
+		if (map->map[y + 1][x] == '1')
+			map->map[y + 1][x] = 2;
+		if (map->map[y][x - 1] == '1')
+			map->map[y][x - 1] = 4;
+		if (map->map[y - 1][x] == '1')
+			map->map[y - 1][x] = 8;
 	}
-	j = -1;
-	while (map->map[++j])
+	if (mode == 'd')
 	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
-		{
-			if (flor(map->map[j][i]))
-				corners(map, j, i);
-		}
+		map->map[y][x] = '0';
+		if (map->map[y - 1][x] == 8)
+			map->map[y - 1][x] = 88;
+		else if (map->map[y][x + 1] == 6)
+			map->map[y][x + 1] = 66;
+		else if (map->map[y][x - 1] == 4)
+			map->map[y][x - 1] = 44;
+		else
+			map->map[y][x] = 55;
 	}
-	j = -1;
-	while (map->map[++j])
-	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
-		{
-			if (!(flor(map->map[j][i])))
-				singles(map, j, i);
-		}
-	}
-}
-
-static void	walls(t_map *map, int y, int x)
-{
-	if (map->collisions[y][x + 1] == '1')
-		map->map[y][x + 1] = 6;
-	if (map->collisions[y + 1][x] == '1')
-		map->map[y + 1][x] = 2;
-	if (map->collisions[y][x - 1] == '1')
-		map->map[y][x - 1] = 4;
-	if (map->collisions[y - 1][x] == '1')
-		map->map[y - 1][x] = 8;
 }
 
 static void	corners(t_map *map, int y, int x)
 {
-	if (map->collisions[y - 1][x + 1] == '1' 
-	&& map->collisions[y][x + 1] == '1' && map->collisions[y - 1][x] == '1')
+	if (map->collisions[y][x + 1] == '\n' || x - 1 == -1 
+	|| y - 1 == -1 || y + 1 == map->height)
+		return ;
+	if (map->map[y][x] == 5 && map->map[y][x + 1] == '1')
+		map->map[y][x + 1] = 6;
+	if (map->map[y][x] == 5 && map->map[y - 1][x] == '1')
+		map->map[y - 1][x] = 8;
+	if (map->map[y][x] == 5 && map->map[y][x - 1] == '1')
+		map->map[y][x - 1] = 4;
+	if (map->map[y][x] == 5 && map->map[y + 1][x] == '1')
+		map->map[y + 1][x] = 2;
+	if (map->map[y - 1][x] == 8 && map->map[y][x + 1] == 6)
 		map->map[y - 1][x + 1] = 9;
-	if (map->collisions[y + 1][x + 1] == '1' 
-	&& map->collisions[y + 1][x] == '1' && map->collisions[y][x + 1] == '1') 
-		map->map[y + 1][x + 1] = 3;
-	if (map->collisions[y + 1][x - 1] == '1' 
-	&& map->collisions[y][x - 1] == '1' && map->collisions[y + 1][x] == '1') 
-		map->map[y + 1][x - 1] = 1;
-	if (map->collisions[y - 1][x - 1] == '1' 
-	&& map->collisions[y][x - 1] == '1' && map->collisions[y - 1][x] == '1')
+	if (map->map[y - 1][x] == 8 && map->map[y][x - 1] == 4)
 		map->map[y - 1][x - 1] = 7;
-	if (map->collisions[y - 1][x + 1] == '1' 
-	&& flor(map->collisions[y][x + 1]) && flor(map->collisions[y - 1][x]))
-		map->map[y - 1][x + 1] = 99;
-	if (map->collisions[y + 1][x + 1] == '1' 
-	&& flor(map->collisions[y + 1][x]) && flor(map->collisions[y][x + 1]))
-		map->map[y + 1][x + 1] = 77;
-	if (map->collisions[y + 1][x - 1] == '1' 
-	&& flor(map->collisions[y][x - 1]) && flor(map->collisions[y + 1][x]))
-		map->map[y + 1][x - 1] = 11;
-	if (map->collisions[y - 1][x - 1] == '1' 
-	&& flor(map->collisions[y][x - 1]) && flor(map->collisions[y - 1][x]))
-		map->map[y - 1][x - 1] = 33;
+	if (map->map[y + 1][x] == 2 && map->map[y][x - 1] == 4)
+		map->map[y + 1][x - 1] = 1;
+	if (map->map[y + 1][x] == 2 && map->map[y][x + 1] == 6)
+		map->map[y + 1][x + 1] = 3;
+	if (map->map[y][x] == 5)
+		inner_corners(map, y, x);
 }
 
 static void	singles(t_map *map, int y, int x)
 {
-	int	corners;
-	int	sides;
-	
-	corners = 0;
-	sides = 0;
-	if (x + 1 == '\n' || x - 1 == -1 || y - 1 == -1 || y + 1 == map->row_count)
+	int	walkables;
+
+	walkables = 0;
+	if (map->collisions[y][x + 1] == '\n' || x - 1 == -1 
+	|| y - 1 == -1 || y + 1 == map->height)
 		return ;
-	if (flor(map->collisions[y][x + 1]))
-		sides++;
-	if (flor(map->collisions[y][x - 1]))
-		sides++;
-	if (flor(map->collisions[y + 1][x]))
-		sides++;
-	if (flor(map->collisions[y - 1][x]))
-		sides++;
-	if (flor(map->collisions[y + 1][x + 1]))
-		corners++;
-	if (flor(map->collisions[y - 1][x - 1]))
-		corners++;
-	if (flor(map->collisions[y + 1][x - 1]))
-		corners++;
-	if (flor(map->collisions[y - 1][x + 1]))
-		corners++;
-	singles_handler(&map->map[y][x], corners, sides);
+	if (ground(map->collisions[y][x + 1], 1))
+		walkables++;
+	if (ground(map->collisions[y][x - 1], 1))
+		walkables++;
+	if (ground(map->collisions[y + 1][x], 1))
+		walkables++;
+	if (ground(map->collisions[y - 1][x], 1))
+		walkables++;
+	if (ground(map->collisions[y + 1][x + 1], 1))
+		walkables++;
+	if (ground(map->collisions[y - 1][x - 1], 1))
+		walkables++;
+	if (ground(map->collisions[y + 1][x - 1], 1))
+		walkables++;
+	if (ground(map->collisions[y - 1][x + 1], 1))
+		walkables++;
+	if (walkables > 3)
+		map->map[y][x] = 5;
+}
+
+static void	function_caller(t_map *map, int i, int j, int counter)
+{
+	while (++counter < 4)
+	{
+		j = -1;
+		while (map->map[++j])
+		{
+			i = -1;
+			while (counter == 1 && map->map[j][++i] != '\n')
+			{
+				if (ground(map->map[j][i], 2))
+					walls_n_doors(map, j, i, 'w');
+			}
+			while (counter == 2 && map->map[j][++i] != '\n')
+			{
+				if (map->collisions[j][i] == '1')
+					singles(map, j, i);
+			}
+			while (counter == 3 && map->map[j][++i] != '\n')
+				corners(map, j, i);
+		}
+	}
 }
 
 void	map_transformer(t_map *map)
 {
-	int	i;
 	int	j;
 
 	j = -1;
-	map->map = (char **)malloc(sizeof(char*) * (map->row_count + 1));
-	map->collisions[map->row_count] = NULL;
-	while (++j < map->row_count)
-		map->map[j] = ft_strdup(map->collisions[j]);
-	j = -1;
-	if (!map->map)
+	map->map = (char **)malloc(sizeof(char *) * (map->height + 1));
+	if (!(map->map))
 		delete_map(map->collisions, 'e');
-	j = -1;
-	while (map->map[++j])
+	map->collisions[map->height] = NULL;
+	while (++j < map->height)
 	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
+		map->map[j] = ft_strdup(map->collisions[j]);
+		if (!(map->map[j]))
 		{
-			if (flor(map->map[j][i]))
-				walls(map, j, i);
+			delete_map(map->collisions, '0');
+			delete_map(map->map, 'e');
 		}
 	}
-	j = -1;
-	while (map->map[++j])
-	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
-		{
-			if (flor(map->map[j][i]))
-				corners(map, j, i);
-		}
-	}
-	j = -1;
-	while (map->map[++j])
-	{
-		i = -1;
-		while (map->map[j][++i] != '\n')
-		{
-			if (!(flor(map->map[j][i])))
-				singles(map, j, i);
-		}
-	}
+	function_caller(map, -1, -1, 0);
+	walls_n_doors(map, map->exit_y, map->exit_x, 'd');
+	walls_n_doors(map, map->player_y, map->player_x, 'd');
 }

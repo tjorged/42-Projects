@@ -35,15 +35,14 @@ static void	file_name_checker(char *file)
 		write(2, "INVALID MAP NAME SNAKE!\n", 24);
 		exit(0);
 	}
-	
 }
 
 static int	row_counter(char *file)
 {
-	int	i;
-	int	fd;
-	char 	*row;
-	
+	int		i;
+	int		fd;
+	char	*row;
+
 	i = 0;
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
@@ -69,10 +68,10 @@ static void	row_creator(t_map *map, char *file)
 {
 	int	i;
 	int	fd;
-	
+
 	i = -1;
 	fd = open(file, O_RDONLY);
-	while (++i < map->row_count)
+	while (++i < map->height)
 	{
 		map->collisions[i] = get_next_line(fd);
 		if (!map->collisions[i])
@@ -83,43 +82,15 @@ static void	row_creator(t_map *map, char *file)
 
 void	**mapper(char *file, t_map *map)
 {
-	char 	*row;
-	
+	map->collect = 0;
 	file_name_checker(file);
-	map->row_count = row_counter(file);
-	map->collisions = (char **)malloc(sizeof(char*) * (map->row_count + 1));
+	map->height = row_counter(file);
+	map->collisions = (char **)malloc(sizeof(char *) * (map->height + 1));
 	if (!map->collisions)
 		exit(0);
-	map->collisions[map->row_count] = NULL;
+	map->collisions[map->height] = NULL;
 	row_creator(map, file);
 	map_checker(map);
 	map_transformer(map);
-	delete_map(map->collisions, 'a');
 	return (NULL);
-}
-
-int	main(int argc, char *argv[])
-{
-	int	j;
-	int	i;
-	t_map	map;
-	
-	map.collect = 0;
-	mapper(argv[1], &map);
-	j = -1;
-	while (map.map[++j])
-	{
-		i = -1;
-		while (map.map[j][++i] != '\n')
-		{
-			if(map.map[j][i] < 10)
-				printf("%i    ", map.map[j][i]);
-			else if(map.map[j][i] < 100)
-				printf("%i   ", map.map[j][i]);
-			else
-				printf("%i  ", map.map[j][i]);
-		}
-		printf("\n");
-	}
-	delete_map(map.map, 'a');
 }

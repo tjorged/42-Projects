@@ -28,24 +28,46 @@ int	keylog(int key, t_mlx *mlx)
 	return (0);
 }
 
-
-
-int main()
+int	main(int argc, char *argv[])
 {
 	t_mlx		mlx;
-	t_asset		back;
+	t_map		map;
+	t_frame		frame;
+	t_image		asset[200];
+	int		j;
+	int		i;
+
+	mapper(argv[1], &map);
+	j = -1;
+	while (map.map[++j])
+	{
+		i = -1;
+		while (map.map[j][++i] != '\n')
+		{
+			if (map.map[j][i] < 10)
+				printf("%i    ", map.map[j][i]);
+			else if (map.map[j][i] < 100)
+				printf("%i   ", map.map[j][i]);
+			else
+				printf("%i  ", map.map[j][i]);
+		}
+		printf("\n");
+	}
+	printf("lenght = %i\n", map.lenght);
+	printf("height = %i\n", map.height);
 	
- 	back.path = "./assets/map/teste.xpm";
 	mlx.mlx = mlx_init();
 	if (!mlx.mlx)
 		return (1);
-	mlx.window = mlx_new_window(mlx.mlx, 1920, 1080, "so_long");
+	mlx.window = mlx_new_window(mlx.mlx, map.lenght, map.height, "so_long");
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
+	layer_creator(&frame, &map, &mlx, &asset);
 	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &keylog, &mlx);
-	back.img = mlx_xpm_file_to_image(mlx.mlx, back.path, &back.w, &back.h);
-	mlx_put_image_to_window(mlx.mlx, mlx.window, back.img, 0, 0);
+	mlx_put_image_to_window(mlx.mlx, mlx.window, frame.back.img, 0, 0);
 	mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
 	mlx_loop(mlx.mlx);
+	delete_map(map.map, 'a');
+	delete_map(map.collisions, 'a');
 	return (0);
 }

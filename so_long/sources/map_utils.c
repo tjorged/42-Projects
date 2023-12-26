@@ -16,7 +16,7 @@ void	coord_finder(t_map *map)
 {
 	int	i;
 	int	j;
-	
+
 	j = -1;
 	while (map->collisions[++j] != NULL)
 	{
@@ -37,31 +37,46 @@ void	coord_finder(t_map *map)
 	}
 }
 
-int	flor(char current)
+int	ground(char current, int mode)
 {
-	if (current == '0' || current == 'C' 
-	|| current == 'E' || current == 'P')
+	if (mode == 1 && (current == '0' 
+			|| current == 'C' 
+			|| current == 'E' 
+			|| current == 'P'))
+		return (1);
+	if (mode == 2 && (current == '0' 
+			|| current == 'C' 
+			|| current == 'E' 
+			|| current == 'P' 
+			|| current == 5))
 		return (1);
 	return (0);
 }
 
-void	singles_handler(char *current, int corners, int sides)
+void	inner_corners(t_map *map, int y, int x)
 {
-	if (corners + sides == 8)
-		(*current) = 5;
-	else if (corners == 4)
-		(*current) = 5;
-	else if (sides == 4)
-		(*current) = 5;
-	else if (sides == 2 && corners == 2)
-		(*current) = 5;
-	else if (((*current) == 1 || (*current) == 7) && corners == 2)
-		(*current) = 4;
-	else if (((*current) == 3 || (*current) == 9) && corners == 2)
-		(*current) = 6;
-	else if (((*current) == 7 || (*current) == 9) && corners == 2)
-		(*current) = 8;
-	else if (((*current) == 1 || (*current) == 3) && corners == 2)
-		(*current) = 2;
+	if (map->map[y + 1][x] == 6 && (map->map[y][x + 1] == 2 
+	|| map->map[y][x + 1] == 5 || map->map[y][x + 1] == 11))
+		map->map[y][x] = 77;
+	if (map->map[y][x + 1] == 2 && (map->map[y + 1][x] == 6 
+	|| map->map[y + 1][x] == 5 || map->map[y + 1][x] == 99))
+		map->map[y][x] = 77;
+	if (map->map[y - 1][x] == 6 && (map->map[y][x + 1] == 8 
+	|| map->map[y][x + 1] == 5 || map->map[y][x + 1] == 33))
+		map->map[y][x] = 11;
+	if (map->map[y][x + 1] == 8 && (map->map[y - 1][x] == 6 
+	|| map->map[y - 1][x] == 5 || map->map[y - 1][x] == 77))
+		map->map[y][x] = 11;
+	if (map->map[y][x - 1] == 8 && (map->map[y - 1][x] == 4 
+	|| map->map[y - 1][x] == 5 || map->map[y - 1][x] == 99))
+		map->map[y][x] = 33;
+	if (map->map[y - 1][x] == 4 && (map->map[y][x - 1] == 8 
+	|| map->map[y][x - 1] == 5 || map->map[y][x - 1] == 11))
+		map->map[y][x] = 33;
+	if (map->map[y + 1][x] == 4 && (map->map[y][x - 1] == 2 
+	|| map->map[y][x - 1] == 5 || map->map[y][x - 1] == 77))
+		map->map[y][x] = 99;
+	if (map->map[y][x - 1] == 2 && (map->map[y + 1][x] == 4 
+	|| map->map[y + 1][x] == 5 || map->map[y + 1][x] == 33))
+		map->map[y][x] = 99;
 }
-

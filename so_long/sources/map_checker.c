@@ -38,6 +38,7 @@ static void	collect_to_player(t_map *map, int y, int x, int *collect)
 	|| map->collisions[y - 1][x] == 'E' || map->collisions[y - 1][x] == 'C')
 		collect_to_player(map, y - 1, x, collect);
 }
+
 static void	collect_to_exit(t_map *map, int y, int x, int *collect)
 {
 	if (map->collisions[y][x] == 'f')
@@ -69,7 +70,7 @@ static void	char_checker(t_map *map, int y, int x)
 {
 	int	exit;
 	int	player;
-	
+
 	exit = 0;
 	player = 0;
 	while (map->collisions[++y] != NULL)
@@ -100,8 +101,9 @@ static void	wall_checker(t_map *map, int y, int x, int max_y)
 		if (map->collisions[y][0] != '1' 
 		|| map->collisions[y][ft_strlen(map->collisions[y]) - 2] != '1')
 			delete_map(map->collisions, 'e');
-		if (y != max_y 
-		&& ft_strlen(map->collisions[y]) != ft_strlen(map->collisions[y + 1]))
+		if (y != max_y && 
+			ft_strlen(map->collisions[y]) 
+			!= ft_strlen(map->collisions[y + 1]))
 			delete_map(map->collisions, 'e');
 		y++;
 	}
@@ -122,12 +124,12 @@ void	map_checker(t_map *map)
 {
 	int	i;
 	int	j;
-	
+
 	i = 0;
 	j = 0;
 	map->collect = 0;
-	wall_checker(map, 0, -1, (map->row_count - 1));
-	map->lenght = ft_strlen(map->collisions[0]);
+	wall_checker(map, 0, -1, (map->height - 1));
+	map->lenght = ft_strlen(map->collisions[0]) - 1;
 	char_checker(map, -1, -1);
 	coord_finder(map);
 	collect_to_player(map, map->player_y, map->player_x, &j);

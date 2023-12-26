@@ -15,7 +15,7 @@
 void	delete_map(char **map, char mode)
 {
 	int	i;
-	
+
 	i = -1;
 	while (map[++i])
 		free(map[i]);
