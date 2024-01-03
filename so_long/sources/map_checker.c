@@ -129,7 +129,7 @@ void	map_checker(t_map *map)
 	j = 0;
 	map->collect = 0;
 	wall_checker(map, 0, -1, (map->height - 1));
-	map->lenght = ft_strlen(map->collisions[0]) - 1;
+	map->width = ft_strlen(map->collisions[0]) - 1;
 	char_checker(map, -1, -1);
 	coord_finder(map);
 	collect_to_player(map, map->player_y, map->player_x, &j);

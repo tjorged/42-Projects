@@ -2,68 +2,69 @@
 
 static void xpm_entities_paths(t_image *asset)
 {
-    asset[au].path = "./assets/map/u.xpm";
-	asset[au1].path = "./assets/map/u1.xpm";
-	asset[au2].path = "./assets/map/u2.xpm";
-	asset[ad].path = "./assets/map/d.xpm";
-	asset[ad1].path = "./assets/map/d1.xpm";
-	asset[ad2].path = "./assets/map/d2.xpm";
-	asset[al].path = "./assets/map/l.xpm";
-	asset[al1].path = "./assets/map/l1.xpm";
-	asset[al2].path = "./assets/map/l2.xpm";
-	asset[ar].path = "./assets/map/r.xpm";
-	asset[ar1].path = "./assets/map/r1.xpm";
-	asset[ar2].path = "./assets/map/r2.xpm";
+    asset[111].path = "./assets/entities/xpm/u.xpm";
+	asset[112].path = "./assets/entities/xpm/u1.xpm";
+	asset[113].path = "./assets/entities/xpm/u2.xpm";
+	asset[114].path = "./assets/entities/xpm/d.xpm";
+	asset[115].path = "./assets/entities/xpm/d1.xpm";
+	asset[116].path = "./assets/entities/xpm/d2.xpm";
+	asset[117].path = "./assets/entities/xpm/l.xpm";
+	asset[118].path = "./assets/entities/xpm/l1.xpm";
+	asset[119].path = "./assets/entities/xpm/l2.xpm";
+	asset[120].path = "./assets/entities/xpm/r.xpm";
+	asset[121].path = "./assets/entities/xpm/r1.xpm";
+	asset[122].path = "./assets/entities/xpm/r2.xpm";
 }
 
 static void	xpm_map_paths(t_image *asset)
 {
-	asset[a1].path = "./assets/map/1.xpm";
-	asset[a2].path = "./assets/map/2.xpm";
-	asset[a3].path = "./assets/map/3.xpm";
-	asset[a4].path = "./assets/map/4.xpm";
-	asset[a5].path = "./assets/map/5.xpm";
-	asset[a6].path = "./assets/map/6.xpm";
-	asset[a7].path = "./assets/map/7.xpm";
-	asset[a8].path = "./assets/map/8.xpm";
-	asset[a9].path = "./assets/map/9.xpm";
-	asset[a14].path = "./assets/map/14.xpm";
-	asset[a18].path = "./assets/map/18.xpm";
-	asset[a16].path = "./assets/map/16.xpm";
-	asset[a11].path = "./assets/map/11.xpm";
-	asset[a33].path = "./assets/map/33.xpm";
-	asset[a44].path = "./assets/map/44.xpm";
-	asset[a66].path = "./assets/map/66.xpm";
-	asset[a77].path = "./assets/map/77.xpm";
-	asset[a88].path = "./assets/map/88.xpm";
-	asset[a99].path = "./assets/map/99.xpm"; 
-	asset[aE].path = "./assets/map/E.xpm";
-	asset[ae].path = "./assets/map/e.xpm";
-	asset[aC].path = "./assets/map/C.xpm";
-	asset[a0].path = "./assets/map/0.xpm";
+	asset[1].path = "./assets/map/xpm/1.xpm";
+	asset[2].path = "./assets/map/xpm/2.xpm";
+	asset[3].path = "./assets/map/xpm/3.xpm";
+	asset[4].path = "./assets/map/xpm/4.xpm";
+	asset[5].path = "./assets/map/xpm/52.xpm";
+	asset[6].path = "./assets/map/xpm/6.xpm";
+	asset[7].path = "./assets/map/xpm/7.xpm";
+	asset[8].path = "./assets/map/xpm/8.xpm";
+	asset[9].path = "./assets/map/xpm/9.xpm";
+	asset[14].path = "./assets/map/xpm/14.xpm";
+	asset[18].path = "./assets/map/xpm/18.xpm";
+	asset[16].path = "./assets/map/xpm/16.xpm";
+	asset[11].path = "./assets/map/xpm/11.xpm";
+	asset[33].path = "./assets/map/xpm/33.xpm";
+	asset[44].path = "./assets/map/xpm/44.xpm";
+	asset[66].path = "./assets/map/xpm/66.xpm";
+	asset[77].path = "./assets/map/xpm/77.xpm";
+	asset[88].path = "./assets/map/xpm/88.xpm";
+	asset[99].path = "./assets/map/xpm/99.xpm"; 
+	asset[69].path = "./assets/map/xpm/69.xpm";
+	asset[101].path = "./assets/map/xpm/101.xpm";
+	asset[67].path = "./assets/map/xpm/67.xpm";
+	asset[48].path = "./assets/map/xpm/0.xpm";
+	asset[54].path = "./assets/map/xpm/54.xpm";
 }
 
 static void	img_sizes(t_image *asset)
 {
 	int	i;
 
-	i = 0;
-	while (++i < 35)
+	i = -1;
+	while (++i < 128)
 	{
-		if (i == 4)
+		/*if (i == 4)
 		{
-			asset[i].height = 208/2;
-			asset[i].width = 128/2;
-		}
-		else if (i <= 22)
+			asset[i].height = 208/SCALER;
+			asset[i].width = 128/SCALER;
+		}*/
+		if (i < 111)
 		{
-			asset[i].height = 128/2;
-			asset[i].width = 128/2;
+			asset[i].height = 128/SCALER;
+			asset[i].width = 128/SCALER;
 		}
 		else
 		{
-			asset[i].height = 64/2;
-			asset[i].width = 32/2;
+			asset[i].height = 64/SCALER;
+			asset[i].width = 32/SCALER;
 		}
 	}
 }
@@ -73,32 +74,39 @@ static void	imgs_initializer(t_image *asset, t_mlx *mlx)
 	int	i;
 
 	i = -1;
-	while (++i < 35)
+	while (++i < 128)
 	{
-		asset[i].img = mlx_xpm_file_to_image(mlx->mlx, 
+		if (asset[i].path)
+		{
+			asset[i].img = mlx_xpm_file_to_image(mlx->mlx, 
 				asset[i].path, &asset[i].width, &asset[i].height);
-		printf("path[%i] = %s\n", i, asset[i].path);
+		}
 	}
 	i = -1;
-	while (++i < 36)
+	while (++i < 128)
 	{
-		asset[i].addr = mlx_get_data_addr(asset[i].img, 
-			&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
-		printf("address[%i] = %p\n", i, &asset[i].addr);
+		if (asset[i].path)
+		{
+			asset[i].addr = mlx_get_data_addr(asset[i].img, 
+				&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
+		}
 	}
 }
 
 t_image *assets_initializer(t_mlx *mlx)
 {
-    t_image     *asset;
+	int			i;
+	t_image     *asset;
 
-    asset = malloc(sizeof(t_image) * 35);
+    asset = malloc(sizeof(t_image) * 128);
     if (!asset)
         return (NULL);
+	i = -1;
+	while (++i < 128)
+		asset[i].path = NULL;
     xpm_map_paths(asset);
 	xpm_entities_paths(asset);
 	img_sizes(asset);
 	imgs_initializer(asset, mlx);
-	printf("OI!\n");
     return (asset);
 }

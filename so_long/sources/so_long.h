@@ -17,42 +17,24 @@
 # include "../mlx/mlx.h"
 # include "../libft/libft.h"
 
-# define a1 0
-# define a2 1
-# define a3 2
-# define a4 3
-# define a5 4
-# define a6 5
-# define a7 6
-# define a8 7
-# define a9 8
-# define a11 9
-# define a33 10
-# define a44 11
-# define a66 12
-# define a77 13
-# define a88 14
-# define a99 15
-# define aE 16
-# define ae 17
-# define aC 18
-# define a0 19
-# define a14 20
-# define a18 21
-# define a16 22
-# define ad 23
-# define ad1 24
-# define ad2 25
-# define au 26
-# define au1 27
-# define au2 28
-# define al 29
-# define al1 30
-# define al2 31
-# define ar 32
-# define ar1 33
-# define ar2 34
 
+typedef enum e_type {
+	AD = 111,
+	AD1 = 112,	
+	AD2 = 113,
+	AU = 114,
+	AU1 = 115,
+	AU2 = 116,
+	AL = 117,
+	AL1 = 118,
+	AL2 = 119,
+	AR = 120,
+	AR1 = 121,
+	AR2 = 122,
+} t_type;
+
+# define SCALER 2
+# define SIZE (128/SCALER)
 
 typedef struct	s_image
 {
@@ -71,13 +53,8 @@ typedef struct	s_frame
 	t_image		back;
 	t_image		player;
 	t_image		front;
+	t_image		frame;
 }	t_frame;
-
-typedef struct s_mlx
-{
-	void	*mlx;
-	void	*window;
-}	t_mlx;
 
 typedef struct s_map
 {
@@ -85,23 +62,56 @@ typedef struct s_map
 	char	**collisions;
 	int		collect;
 	int		height;
-	int		lenght;
+	int		width;
 	int		exit_y;
 	int		exit_x;
 	int		player_y;
 	int		player_x;
 }	t_map;
 
-void	delete_map(char **map, char mode);
-void	coord_finder(t_map *map);
-void	**mapper(char *file, t_map *map);
-void	map_checker(t_map *map);
-void	map_transformer(t_map *map);
-void	inner_corners(t_map *map, int y, int x);
-void	layer_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
+typedef struct s_mlx
+{
+	void	*mlx;
+	void	*window;
+	t_frame *frame;
+	t_map	*map;
+}	t_mlx;
+
+
+
+//error_handler.c
+void			delete_map(char **map, char mode);
+
+//mapper_utils.c
+void			coord_finder(t_map *map);
+
+//map_checker.c
+void			map_checker(t_map *map);
+
+//mapper.c
+void			**mapper(char *file, t_map *map);
+
+//map_transformer_utils.c
+void			transform(t_map *map, int y, int x);
+int				ground(char current);
+
+//map_transformer.c
+void			inner_corners(t_map *map, int y, int x);
+void			inner_corners2(t_map *map, int y, int x);
+void			corners(t_map *map, int y, int x);
+void			borders(t_map *map, int y, int x);
+
+//assets_initializer.c
+t_image 		*assets_initializer(t_mlx *mlx);
+
+//layers_creator.c
+void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
+unsigned int	get_color(t_image *img, int x, int y);
+void			layers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
+
+//frame_painter.c
+unsigned int	get_color(t_image *img, int x, int y);
 void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
-int	get_color(t_image *img, int x, int y);
-int		ground(char current, int mode);
-t_image *assets_initializer(t_mlx *mlx);
+
 
 #endif

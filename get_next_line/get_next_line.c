@@ -28,11 +28,10 @@ char	*get_next_line(int fd)
 	return (new_line);
 }
 
-/*int	main(void)
+int	main(void)
 {
-	int fd;
-	char *line;
-	fd = open("tes.txt", O_RDONLY);
+	printf("LINHA: %s", get_next_line(1));
+	/*fd = open("tes.txt", O_RDONLY);
 	line = get_next_line(fd);
 	printf("1st: %s", line);
 	free(line);
@@ -45,6 +44,6 @@ char	*get_next_line(int fd)
 	line = get_next_line(fd);
 	printf("4th: %s", line);
 	free(line);
-	close(fd);
+	close(fd);*/
 	return (0);
-}*/
+}

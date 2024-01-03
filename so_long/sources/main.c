@@ -12,6 +12,30 @@
 
 #include "so_long.h"
 
+void render(t_mlx *mlx)
+{
+	int		y;
+	int		x;
+
+	y = 0;
+	while (y < mlx->map->height * SIZE)
+	{
+		x = 0;
+		while (x < mlx->map->width * SIZE)
+		{
+			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
+			get_color(&mlx->frame->back,  x, y));
+			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
+			get_color(&mlx->frame->player,  x, y));
+			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
+			get_color(&mlx->frame->front,  x, y));
+			x++;
+		}
+		y++;
+	}
+	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->frame->frame.img, 0, 0);
+}
+
 int	end_mlx(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->window);
@@ -31,15 +55,15 @@ int	keylog(int key, t_mlx *mlx)
 int	main(int argc, char *argv[])
 {
 	t_mlx			mlx;
-	t_map			map;
+	static t_map			map;
 	t_frame			frame;
 	t_image			*asset;
 	int			j;
 	int			i;
 
+	if (argc != 2)
+		exit(0);
 	mapper(argv[1], &map);
-
-
 	j = -1;
 	while (map.map[++j])
 	{
@@ -56,27 +80,28 @@ int	main(int argc, char *argv[])
 		printf("\n");
 	}
 
-
-	printf("lenght = %i\n", map.lenght);
-	printf("height = %i\n", map.height);
-	printf("image = %li\n", sizeof(t_image));
 	mlx.mlx = mlx_init();
 	if (!mlx.mlx)
 		return (1);
 	asset = assets_initializer(&mlx);
 	if (!asset)
 		return (free(mlx.mlx), delete_map(map.map, 'a'), delete_map(map.collisions, 'e'), 1);
-	mlx.window = mlx_new_window(mlx.mlx, map.lenght, map.height, "so_long");
+	mlx.window = mlx_new_window(mlx.mlx, map.width * (128/SCALER), 
+	map.height * (128/SCALER), "so_long");
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
+	
+	// exit(0);
+	mlx.frame = &frame;
+	mlx.map = &map;
+	layers_creator(&frame, &map, &mlx, asset);
 
+	// mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &keylog, &mlx);
+	mlx_loop_hook(mlx.mlx, render, &mlx);
+	mlx_loop_hook(mlx.mlx, render, &mlx);
 
-	write(1, "oi\n", 3);
-	/*layer_creator(&frame, &map, &mlx, asset);
-	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &keylog, &mlx);
-	mlx_put_image_to_window(mlx.mlx, mlx.window, frame.back.img, 0, 0);
-	mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
-	mlx_loop(mlx.mlx);*/
+	// mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
+	mlx_loop(mlx.mlx);
 	delete_map(map.map, 'a');
 	delete_map(map.collisions, 'a');
 	return (0);

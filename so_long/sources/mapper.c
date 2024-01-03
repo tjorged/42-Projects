@@ -64,7 +64,7 @@ static int	row_counter(char *file)
 	return (i);
 }
 
-static void	row_creator(t_map *map, char *file)
+static void		row_creator(t_map *map, char *file)
 {
 	int	i;
 	int	fd;
@@ -78,6 +78,27 @@ static void	row_creator(t_map *map, char *file)
 			delete_map(map->collisions, 'e');
 	}
 	close(fd);
+}
+
+static void		map_transformer(t_map *map)
+{
+	int	j;
+
+	j = -1;
+	map->map = (char **)malloc(sizeof(char *) * (map->height + 1));
+	if (!(map->map))
+		delete_map(map->collisions, 'e');
+	map->map[map->height] = NULL;
+	while (++j < map->height)
+	{
+		map->map[j] = ft_strdup(map->collisions[j]);
+		if (!(map->map[j]))
+		{
+			delete_map(map->collisions, '0');
+			delete_map(map->map, 'e');
+		}
+	}
+	transform(map, 0, 0);
 }
 
 void	**mapper(char *file, t_map *map)
