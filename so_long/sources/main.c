@@ -12,30 +12,6 @@
 
 #include "so_long.h"
 
-void render(t_mlx *mlx)
-{
-	int		y;
-	int		x;
-
-	y = 0;
-	while (y < mlx->map->height * SIZE)
-	{
-		x = 0;
-		while (x < mlx->map->width * SIZE)
-		{
-			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
-			get_color(&mlx->frame->back,  x, y));
-			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
-			get_color(&mlx->frame->player,  x, y));
-			my_mlx_pixel_put(&mlx->frame->frame, x, y, 
-			get_color(&mlx->frame->front,  x, y));
-			x++;
-		}
-		y++;
-	}
-	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->frame->frame.img, 0, 0);
-}
-
 int	end_mlx(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->window);
@@ -48,6 +24,10 @@ int	end_mlx(t_mlx *mlx)
 int	keylog(int key, t_mlx *mlx)
 {
 	(void)mlx;
+	/*if (key == 'w')
+	if (key == 'a')
+	if (key == 's')
+	if (key == 'd')*/
 	printf("Pressed key: %d\n", key);
 	return (0);
 }
@@ -61,6 +41,7 @@ int	main(int argc, char *argv[])
 	int			j;
 	int			i;
 
+	mlx.loop = 1;
 	if (argc != 2)
 		exit(0);
 	mapper(argv[1], &map);
@@ -86,23 +67,28 @@ int	main(int argc, char *argv[])
 	asset = assets_initializer(&mlx);
 	if (!asset)
 		return (free(mlx.mlx), delete_map(map.map, 'a'), delete_map(map.collisions, 'e'), 1);
-	mlx.window = mlx_new_window(mlx.mlx, map.width * (128/SCALER), 
-	map.height * (128/SCALER), "so_long");
+	mlx.window = mlx_new_window(mlx.mlx, map.width * SIZE, 
+	map.height * SIZE, "so_long");
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
 	
 	// exit(0);
+	frame.player_x = map.player_x * SIZE;
+	frame.player_y = map.player_y * SIZE;
+	frame.player = asset[AD];
 	mlx.frame = &frame;
 	mlx.map = &map;
+	mlx.asset = asset;
 	layers_creator(&frame, &map, &mlx, asset);
-
-	// mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &keylog, &mlx);
-	mlx_loop_hook(mlx.mlx, render, &mlx);
-	mlx_loop_hook(mlx.mlx, render, &mlx);
-
-	// mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
-	mlx_loop(mlx.mlx);
+	mlx_do_key_autorepeatoff(mlx.mlx);
+	mlx_hook(mlx.window, KeyPress, KeyPressMask, &key_press, &mlx);
+	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &key_release, &mlx);
+	mlx_loop_hook(mlx.mlx, game_loop, &mlx);
+	//mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
+	if(mlx.loop == 1)
+		mlx_loop(mlx.mlx);
 	delete_map(map.map, 'a');
 	delete_map(map.collisions, 'a');
+	end_mlx(&mlx);
 	return (0);
 }

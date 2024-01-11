@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_printf.h"
 
-void	ft_puthexa(unsigned long nbr, char mode, int *counter)
+void	printf_puthexa(unsigned long nbr, char mode, int *counter)
 {
 	if (mode == 'p')
 	{
 		if (!nbr)
-			ft_putstr("(nil)", counter);
+			printf_putstr("(nil)", counter);
 		else
 		{
 			write(1, "0x", 2);
@@ -26,7 +26,7 @@ void	ft_puthexa(unsigned long nbr, char mode, int *counter)
 		}
 	}
 	if (nbr != 0 && nbr / 16)
-		ft_puthexa(nbr / 16, mode, counter);
+		printf_puthexa(nbr / 16, mode, counter);
 	if (mode == 'X')
 	{
 		write(1, &"0123456789ABCDEF"[nbr % 16], 1);

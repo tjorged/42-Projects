@@ -1,40 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_puthexa.c                                       :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/30 12:18:19 by tjorge-d          #+#    #+#             */
-/*   Updated: 2023/10/30 12:18:23 by tjorge-d         ###   ########.fr       */
+/*   Created: 2023/10/30 12:19:19 by tjorge-d          #+#    #+#             */
+/*   Updated: 2023/10/30 12:19:21 by tjorge-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_printf.h"
 
-void	ft_puthexa(unsigned long nbr, char mode, int *counter)
+void	printf_putstr(char *str, int *counter)
 {
-	if (mode == 'p')
+	unsigned int	i;
+
+	i = 0;
+	if (!str)
 	{
-		if (!nbr)
-			ft_putstr("(nil)", counter);
-		else
-		{
-			write(1, "0x", 2);
-			*counter = *counter + 2;
-			mode = 'x';
-		}
+		printf_putstr("(null)", counter);
+		return ;
 	}
-	if (nbr != 0 && nbr / 16)
-		ft_puthexa(nbr / 16, mode, counter);
-	if (mode == 'X')
+	while (str[i] != '\0')
 	{
-		write(1, &"0123456789ABCDEF"[nbr % 16], 1);
+		write(1, &str[i], 1);
 		(*counter)++;
-	}
-	if (mode == 'x')
-	{
-		write(1, &"0123456789abcdef"[nbr % 16], 1);
-		(*counter)++;
+		i++;
 	}
 }

@@ -50,21 +50,26 @@ static void		walls(t_map *map, int y, int x)
 
 static void		doors(t_map *map, int y, int x)
 {
-	if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') && map->map[y - 1][x] == 8)
+	if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') 
+	&& map->map[y - 1][x] == 8)
 	{
 		map->map[y][x] = '0';
 		map->map[y - 1][x] = 88;
 	}
-	else if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') && map->map[y][x + 1] == 6)
+	else if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') 
+	&& map->map[y][x + 1] == 6)
 	{
 		map->map[y][x] = '0';
 		map->map[y][x + 1] = 66;
 	}
-	else if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') && map->map[y][x - 1] == 4)
+	else if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') 
+	&& map->map[y][x - 1] == 4)
 	{
 		map->map[y][x] = '0';
 		map->map[y][x - 1] = 44;
 	}
+	else if ( map->collisions[y][x] == 'P')
+		map->map[y][x] = 'E';
 }
 
 static void		singles(t_map *map, int y, int x)

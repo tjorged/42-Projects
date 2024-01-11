@@ -31,9 +31,13 @@ typedef enum e_type {
 	AR = 120,
 	AR1 = 121,
 	AR2 = 122,
+	UP = 119,
+	LEFT = 97,
+	DOWN = 115,
+	RIGHT = 100
 } t_type;
 
-# define SCALER 2
+# define SCALER 1
 # define SIZE (128/SCALER)
 
 typedef struct	s_image
@@ -52,6 +56,10 @@ typedef struct	s_frame
 {
 	t_image		back;
 	t_image		player;
+	int			player_x;
+	int			player_y;
+	int			player_state;
+	int			movement_count;
 	t_image		front;
 	t_image		frame;
 }	t_frame;
@@ -63,18 +71,20 @@ typedef struct s_map
 	int		collect;
 	int		height;
 	int		width;
-	int		exit_y;
-	int		exit_x;
 	int		player_y;
 	int		player_x;
+	int		exit_y;
+	int		exit_x;
 }	t_map;
 
 typedef struct s_mlx
 {
-	void	*mlx;
-	void	*window;
-	t_frame *frame;
-	t_map	*map;
+	void		*mlx;
+	void		*window;
+	t_frame 	*frame;
+	t_map		*map;
+	t_image		*asset;
+	int			loop;
 }	t_mlx;
 
 
@@ -111,7 +121,15 @@ void			layers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
 
 //frame_painter.c
 unsigned int	get_color(t_image *img, int x, int y);
-void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
+void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
+void 			render(t_mlx *mlx, t_frame *frame);
 
+//hooks.c
+int		key_press(int keycode, t_mlx *mlx);
+int		key_release(int keycode, t_mlx *mlx);
+
+//main.c
+//loop.c
+int		game_loop(t_mlx *mlx);
 
 #endif

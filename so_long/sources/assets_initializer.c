@@ -2,18 +2,18 @@
 
 static void xpm_entities_paths(t_image *asset)
 {
-    asset[111].path = "./assets/entities/xpm/u.xpm";
-	asset[112].path = "./assets/entities/xpm/u1.xpm";
-	asset[113].path = "./assets/entities/xpm/u2.xpm";
-	asset[114].path = "./assets/entities/xpm/d.xpm";
-	asset[115].path = "./assets/entities/xpm/d1.xpm";
-	asset[116].path = "./assets/entities/xpm/d2.xpm";
-	asset[117].path = "./assets/entities/xpm/l.xpm";
-	asset[118].path = "./assets/entities/xpm/l1.xpm";
-	asset[119].path = "./assets/entities/xpm/l2.xpm";
-	asset[120].path = "./assets/entities/xpm/r.xpm";
-	asset[121].path = "./assets/entities/xpm/r1.xpm";
-	asset[122].path = "./assets/entities/xpm/r2.xpm";
+    asset[AU].path = "./assets/entities/xpm/u.xpm";
+	asset[AU1].path = "./assets/entities/xpm/u1.xpm";
+	asset[AU2].path = "./assets/entities/xpm/u2.xpm";
+	asset[AD].path = "./assets/entities/xpm/d.xpm";
+	asset[AD1].path = "./assets/entities/xpm/d1.xpm";
+	asset[AD2].path = "./assets/entities/xpm/d2.xpm";
+	asset[AL].path = "./assets/entities/xpm/l.xpm";
+	asset[AL1].path = "./assets/entities/xpm/l1.xpm";
+	asset[AL2].path = "./assets/entities/xpm/l2.xpm";
+	asset[AR].path = "./assets/entities/xpm/r.xpm";
+	asset[AR1].path = "./assets/entities/xpm/r1.xpm";
+	asset[AR2].path = "./assets/entities/xpm/r2.xpm";
 }
 
 static void	xpm_map_paths(t_image *asset)
@@ -58,13 +58,13 @@ static void	img_sizes(t_image *asset)
 		}*/
 		if (i < 111)
 		{
-			asset[i].height = 128/SCALER;
-			asset[i].width = 128/SCALER;
+			asset[i].height = SIZE;
+			asset[i].width = SIZE;
 		}
 		else
 		{
-			asset[i].height = 64/SCALER;
-			asset[i].width = 32/SCALER;
+			asset[i].height = SIZE/2;
+			asset[i].width = SIZE/4;
 		}
 	}
 }
