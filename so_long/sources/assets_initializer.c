@@ -1,6 +1,6 @@
 #include "so_long.h"
 
-static void xpm_entities_paths(t_image *asset)
+static void xpm_paths_2(t_image *asset)
 {
     asset[AU].path = "./assets/entities/xpm/u.xpm";
 	asset[AU1].path = "./assets/entities/xpm/u1.xpm";
@@ -14,9 +14,14 @@ static void xpm_entities_paths(t_image *asset)
 	asset[AR].path = "./assets/entities/xpm/r.xpm";
 	asset[AR1].path = "./assets/entities/xpm/r1.xpm";
 	asset[AR2].path = "./assets/entities/xpm/r2.xpm";
+	asset[24].path = "./assets/map/xpm/24.xpm";
+	asset[34].path = "./assets/map/xpm/34.xpm";
+	asset[41].path = "./assets/map/xpm/41.xpm";
+	asset[94].path = "./assets/map/xpm/94.xpm";
+	asset[74].path = "./assets/map/xpm/74.xpm";
 }
 
-static void	xpm_map_paths(t_image *asset)
+static void	xpm_paths_1(t_image *asset)
 {
 	asset[1].path = "./assets/map/xpm/1.xpm";
 	asset[2].path = "./assets/map/xpm/2.xpm";
@@ -51,11 +56,6 @@ static void	img_sizes(t_image *asset)
 	i = -1;
 	while (++i < 128)
 	{
-		/*if (i == 4)
-		{
-			asset[i].height = 208/SCALER;
-			asset[i].width = 128/SCALER;
-		}*/
 		if (i < 111)
 		{
 			asset[i].height = SIZE;
@@ -104,8 +104,8 @@ t_image *assets_initializer(t_mlx *mlx)
 	i = -1;
 	while (++i < 128)
 		asset[i].path = NULL;
-    xpm_map_paths(asset);
-	xpm_entities_paths(asset);
+    xpm_paths_1(asset);
+	xpm_paths_2(asset);
 	img_sizes(asset);
 	imgs_initializer(asset, mlx);
     return (asset);

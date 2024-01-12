@@ -45,3 +45,22 @@ void 	render(t_mlx *mlx, t_frame *frame)
 	}
 	mlx_put_image_to_window(mlx->mlx, mlx->window, frame->frame.img, 0, 0);
 }
+
+void	refresh_back_frame(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset)
+{
+	int		y;
+	int		x;
+
+	y = 0;
+	while (y < map->height)
+	{
+		x = 0;
+		while (x < map->width)
+		{
+			if (map->map[y][x] != '1' && asset[map->map[y][x]].addr)
+				image_into_img(&asset[map->map[y][x]], &frame->back, x * SIZE, y * SIZE);
+			x++;
+		}
+		y++;
+	}
+}

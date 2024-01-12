@@ -90,36 +90,36 @@ typedef struct s_mlx
 
 
 //error_handler.c
-void			delete_map(char **map, char mode);
+void	delete_map(char **map, char mode);
 
 //mapper_utils.c
-void			coord_finder(t_map *map);
+void	coord_finder(t_map *map);
 
 //map_checker.c
-void			map_checker(t_map *map);
+void	map_checker(t_map *map);
 
 //mapper.c
-void			**mapper(char *file, t_map *map);
+void	**mapper(char *file, t_map *map);
 
 //map_transformer_utils.c
-void			transform(t_map *map, int y, int x);
-int				ground(char current);
+void	transform(t_map *map, int y, int x);
+int		ground(char current);
 
 //map_transformer.c
-void			inner_corners(t_map *map, int y, int x);
-void			inner_corners2(t_map *map, int y, int x);
-void			corners(t_map *map, int y, int x);
-void			borders(t_map *map, int y, int x);
+void	inner_corners(t_map *map, int y, int x);
+void	inner_corners2(t_map *map, int y, int x);
+void	corners(t_map *map, int y, int x);
+void	borders(t_map *map, int y, int x);
 
 //assets_initializer.c
 t_image 		*assets_initializer(t_mlx *mlx);
 
 //layers_creator.c
-void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
-unsigned int	get_color(t_image *img, int x, int y);
-void			layers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
+void	ayers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
+void	image_into_img(t_image *asset, t_image *image, int x1, int y1);
 
 //frame_painter.c
+void			refresh_back_frame(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
 unsigned int	get_color(t_image *img, int x, int y);
 void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
 void 			render(t_mlx *mlx, t_frame *frame);

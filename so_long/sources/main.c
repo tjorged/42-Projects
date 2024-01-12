@@ -85,8 +85,7 @@ int	main(int argc, char *argv[])
 	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &key_release, &mlx);
 	mlx_loop_hook(mlx.mlx, game_loop, &mlx);
 	//mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
-	if(mlx.loop == 1)
-		mlx_loop(mlx.mlx);
+	mlx_loop(mlx.mlx);
 	delete_map(map.map, 'a');
 	delete_map(map.collisions, 'a');
 	end_mlx(&mlx);
