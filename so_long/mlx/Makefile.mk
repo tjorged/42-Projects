@@ -8,7 +8,7 @@
 ## Last update Tue May 15 15:41:20 2007 Olivier Crouzet
 ##
 
-## Please use configure script
+## Please use configure script	
 
 
 INC	=%%%%
@@ -16,7 +16,7 @@ INC	=%%%%
 UNAME = $(shell uname)
 CC	= gcc
 ifeq ($(UNAME),FreeBSD)
-	CC = clang
+	CC = clang -g
 endif
 
 NAME		= libmlx.a

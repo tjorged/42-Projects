@@ -33,17 +33,27 @@ int		key_press(int keycode, t_mlx *mlx)
 int		key_release(int keycode, t_mlx *mlx)
 {
 	if (keycode == UP && mlx->frame->player_state == UP)
+	{
 		mlx->frame->player = mlx->asset[AU];
+		mlx->frame->player_state = 0;
+	}
 	if (keycode == LEFT && mlx->frame->player_state == LEFT)
+	{
 		mlx->frame->player = mlx->asset[AL];
+		mlx->frame->player_state = 0;
+	}
 	if (keycode == DOWN && mlx->frame->player_state == DOWN)
+	{
 		mlx->frame->player = mlx->asset[AD];
+		mlx->frame->player_state = 0;
+	}
 	if (keycode == RIGHT && mlx->frame->player_state == RIGHT)
+	{
 		mlx->frame->player = mlx->asset[AR];
+		mlx->frame->player_state = 0;
+	}
 	if (keycode == 65307)
 		mlx_do_key_autorepeaton(mlx->mlx);
-	if (keycode == UP || keycode == LEFT || keycode == DOWN || keycode == RIGHT)
-		mlx->frame->player_state = 0;
 	ft_printf("You released the key:%i\n", keycode);
 	return (0);
 }

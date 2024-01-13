@@ -63,8 +63,8 @@ static void	img_sizes(t_image *asset)
 		}
 		else
 		{
-			asset[i].height = SIZE/2;
-			asset[i].width = SIZE/4;
+			asset[i].height = SIZE / 2;
+			asset[i].width = SIZE / 4;
 		}
 	}
 }

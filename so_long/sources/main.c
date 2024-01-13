@@ -41,7 +41,6 @@ int	main(int argc, char *argv[])
 	int			j;
 	int			i;
 
-	mlx.loop = 1;
 	if (argc != 2)
 		exit(0);
 	mapper(argv[1], &map);
@@ -72,6 +71,7 @@ int	main(int argc, char *argv[])
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
 	
+
 	// exit(0);
 	frame.player_x = map.player_x * SIZE;
 	frame.player_y = map.player_y * SIZE;
@@ -79,6 +79,10 @@ int	main(int argc, char *argv[])
 	mlx.frame = &frame;
 	mlx.map = &map;
 	mlx.asset = asset;
+//	mlx.timer = malloc(sizeof(t_timeval *));
+//	printf("Addres: %p\n", mlx.timer);
+	mlx.frame_time = 1;
+	printf("ADSASDSADASDASDA\n");
 	layers_creator(&frame, &map, &mlx, asset);
 	mlx_do_key_autorepeatoff(mlx.mlx);
 	mlx_hook(mlx.window, KeyPress, KeyPressMask, &key_press, &mlx);

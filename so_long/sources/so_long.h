@@ -16,7 +16,7 @@
 # include "../mlx/mlx_int.h"
 # include "../mlx/mlx.h"
 # include "../libft/libft.h"
-
+# include <sys/time.h>
 
 typedef enum e_type {
 	AD = 111,
@@ -37,8 +37,20 @@ typedef enum e_type {
 	RIGHT = 100
 } t_type;
 
-# define SCALER 1
+# define SCALER 2
+# define SPEED 5
+# define SWITCH_SPEED (100 / (SPEED * 2))
+# define FRAME_RATE 30
 # define SIZE (128/SCALER)
+# define MOVE (SPEED / SCALER)
+# define PLAYER_X (mlx->frame->player_x / SIZE)
+# define PLAYER_Y (mlx->frame->player_y / SIZE)
+
+typedef struct	s_timeval
+{
+	time_t			tv_sec;   //used for seconds
+	suseconds_t		tv_usec;   //used for microseconds
+}	t_timeval;
 
 typedef struct	s_image
 {
@@ -84,7 +96,8 @@ typedef struct s_mlx
 	t_frame 	*frame;
 	t_map		*map;
 	t_image		*asset;
-	int			loop;
+	t_timeval	*timer;
+	long		frame_time;
 }	t_mlx;
 
 
@@ -115,7 +128,7 @@ void	borders(t_map *map, int y, int x);
 t_image 		*assets_initializer(t_mlx *mlx);
 
 //layers_creator.c
-void	ayers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
+void	layers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
 void	image_into_img(t_image *asset, t_image *image, int x1, int y1);
 
 //frame_painter.c
