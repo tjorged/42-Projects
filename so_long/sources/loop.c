@@ -31,22 +31,22 @@ static void	player_movement(t_mlx *mlx)
 {
 	if (mlx->frame->player_state == UP)
 	{
-		mlx->frame->player_y -= MOVE;
+		mlx->frame->player_y -= SPEED;
 		mlx->frame->movement_count++;
 	}
 	else if (mlx->frame->player_state == LEFT)
 	{
-		mlx->frame->player_x -= MOVE;
+		mlx->frame->player_x -= SPEED;
 		mlx->frame->movement_count++;
 	}
 	else if (mlx->frame->player_state == DOWN)
 	{
-		mlx->frame->player_y += MOVE;
+		mlx->frame->player_y += SPEED;
 		mlx->frame->movement_count++;
 	}
 	else if (mlx->frame->player_state == RIGHT)
 	{
-		mlx->frame->player_x += MOVE;
+		mlx->frame->player_x += SPEED;
 		mlx->frame->movement_count++;
 	}
 	asset_switcher(mlx);
@@ -112,14 +112,17 @@ static void	collectibles_check(t_mlx *mlx)
 int	game_loop(t_mlx *mlx)
 {
 	gettimeofday((struct timeval*)mlx->timer, NULL);
-	if (mlx->timer->tv_usec >= mlx->frame_time)
+	if (mlx->timer->tv_usec >= mlx->frame_time \
+	&& mlx->timer->tv_usec <= mlx->frame_time + (1000000 / FRAME_RATE))
 	{
 		player_movement(mlx);
 		collisions_check(mlx);
+		exit_check(mlx);
 		if (mlx->map->collect != 0)
 			collectibles_check(mlx);
 		render(mlx, mlx->frame);
-		mlx->frame_time += 1000000 / FRAME_RATE;
+		gettimeofday((struct timeval*)mlx->timer, NULL);
+		mlx->frame_time = mlx->timer->tv_usec + (1000000 / FRAME_RATE);
 		if (mlx->frame_time >= 1000000)
 			mlx->frame_time -= 1000000;
 	}

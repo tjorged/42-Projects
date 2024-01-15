@@ -53,7 +53,7 @@ int		key_release(int keycode, t_mlx *mlx)
 		mlx->frame->player_state = 0;
 	}
 	if (keycode == 65307)
-		mlx_do_key_autorepeaton(mlx->mlx);
+		end_game(mlx);
 	ft_printf("You released the key:%i\n", keycode);
 	return (0);
 }

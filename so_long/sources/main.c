@@ -12,26 +12,6 @@
 
 #include "so_long.h"
 
-int	end_mlx(t_mlx *mlx)
-{
-	mlx_destroy_window(mlx->mlx, mlx->window);
-	mlx_destroy_display(mlx->mlx);
-	free(mlx->mlx);
-	exit(0);
-	return (0);
-}
-
-int	keylog(int key, t_mlx *mlx)
-{
-	(void)mlx;
-	/*if (key == 'w')
-	if (key == 'a')
-	if (key == 's')
-	if (key == 'd')*/
-	printf("Pressed key: %d\n", key);
-	return (0);
-}
-
 int	main(int argc, char *argv[])
 {
 	t_mlx			mlx;
@@ -70,28 +50,22 @@ int	main(int argc, char *argv[])
 	map.height * SIZE, "so_long");
 	if (!mlx.window)
 		return (free(mlx.mlx), 1);
-	
 
-	// exit(0);
-	frame.player_x = map.player_x * SIZE;
-	frame.player_y = map.player_y * SIZE;
+	frame.player_x = map.player_x * SIZE + SIZE / 3;
+	frame.player_y = map.player_y * SIZE + SIZE / 3;
 	frame.player = asset[AD];
+	frame.player_state = 0;
+	frame.movement_count = 0;
 	mlx.frame = &frame;
 	mlx.map = &map;
 	mlx.asset = asset;
-//	mlx.timer = malloc(sizeof(t_timeval *));
-//	printf("Addres: %p\n", mlx.timer);
+	mlx.timer = malloc(sizeof(t_timeval));
 	mlx.frame_time = 1;
-	printf("ADSASDSADASDASDA\n");
 	layers_creator(&frame, &map, &mlx, asset);
 	mlx_do_key_autorepeatoff(mlx.mlx);
 	mlx_hook(mlx.window, KeyPress, KeyPressMask, &key_press, &mlx);
 	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &key_release, &mlx);
 	mlx_loop_hook(mlx.mlx, game_loop, &mlx);
-	//mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_mlx, &mlx);
 	mlx_loop(mlx.mlx);
-	delete_map(map.map, 'a');
-	delete_map(map.collisions, 'a');
-	end_mlx(&mlx);
 	return (0);
 }

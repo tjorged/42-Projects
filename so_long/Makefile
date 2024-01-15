@@ -4,7 +4,7 @@ CC= cc
 CFLAGS= -g	
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= assets_initializer.c layers_creator.c main.c mapper.c mapper_utils.c error_handler.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c
+SOURCES= assets_initializer.c layers_creator.c main.c mapper.c mapper_utils.c error_handler.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c exit.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))
@@ -39,8 +39,5 @@ fclean: clean
 	rm -f $(NAME)
 	
 re: fclean all
-
-r: 
-	make re && clear && ./so_long maps/map.ber
 
 .PHONY: all fclean clean re

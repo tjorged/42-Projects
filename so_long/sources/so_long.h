@@ -37,12 +37,11 @@ typedef enum e_type {
 	RIGHT = 100
 } t_type;
 
-# define SCALER 2
-# define SPEED 5
+# define SCALER 1
+# define SPEED (6 / SCALER)
 # define SWITCH_SPEED (100 / (SPEED * 2))
-# define FRAME_RATE 30
+# define FRAME_RATE 60
 # define SIZE (128/SCALER)
-# define MOVE (SPEED / SCALER)
 # define PLAYER_X (mlx->frame->player_x / SIZE)
 # define PLAYER_Y (mlx->frame->player_y / SIZE)
 
@@ -104,6 +103,7 @@ typedef struct s_mlx
 
 //error_handler.c
 void	delete_map(char **map, char mode);
+void	end_game(t_mlx *mlx);
 
 //mapper_utils.c
 void	coord_finder(t_map *map);
@@ -145,4 +145,6 @@ int		key_release(int keycode, t_mlx *mlx);
 //loop.c
 int		game_loop(t_mlx *mlx);
 
+//exit_check.c
+void	exit_check(t_mlx *mlx);
 #endif

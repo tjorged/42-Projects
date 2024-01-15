@@ -26,3 +26,23 @@ void	delete_map(char **map, char mode)
 		exit(0);
 	}
 }
+
+void	end_game(t_mlx *mlx)
+{
+	int	i;
+
+	mlx_do_key_autorepeaton(mlx->mlx);
+	free(mlx->timer);
+	i = -1;
+	while (++i < 128)
+	{
+		if (mlx->asset[i].path)
+			mlx_destroy_image(mlx->mlx, mlx->asset[i].img);
+	}
+	delete_map(mlx->map->map, 0);
+	mlx_destroy_window(mlx->mlx, mlx->window);
+	mlx_destroy_display(mlx->mlx);
+	free(mlx->mlx);
+	sleep (3);
+	exit(0);
+}
