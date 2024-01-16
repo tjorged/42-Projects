@@ -59,12 +59,10 @@ static int	row_counter(char *file)
 	}
 	free(row);
 	close(fd);
-	if (i == 0)
-		exit (0);
 	return (i);
 }
 
-static void		row_creator(t_map *map, char *file)
+static void	row_creator(t_map *map, char *file)
 {
 	int	i;
 	int	fd;
@@ -80,7 +78,7 @@ static void		row_creator(t_map *map, char *file)
 	close(fd);
 }
 
-static void		map_transformer(t_map *map)
+static void	map_transformer(t_map *map)
 {
 	int	j;
 
@@ -106,6 +104,11 @@ void	**mapper(char *file, t_map *map)
 	map->collect = 0;
 	file_name_checker(file);
 	map->height = row_counter(file);
+	if (map->height == 0)
+	{
+		write(2, "INVALID MAP NAME SNAKE!\n", 24);
+		exit(0);
+	}
 	map->collisions = (char **)malloc(sizeof(char *) * (map->height + 1));
 	if (!map->collisions)
 		exit(0);

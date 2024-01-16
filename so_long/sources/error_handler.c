@@ -27,22 +27,38 @@ void	delete_map(char **map, char mode)
 	}
 }
 
-void	end_game(t_mlx *mlx)
+void	destroy_assets(t_mlx *mlx, t_image *asset)
 {
 	int	i;
 
-	mlx_do_key_autorepeaton(mlx->mlx);
-	free(mlx->timer);
 	i = -1;
 	while (++i < 128)
 	{
-		if (mlx->asset[i].path)
-			mlx_destroy_image(mlx->mlx, mlx->asset[i].img);
+		if (asset[i].path)
+			mlx_destroy_image(mlx->mlx, asset[i].img);
 	}
+}
+
+void	end_game(t_mlx *mlx)
+{
+	mlx_do_key_autorepeaton(mlx->mlx);
+	destroy_assets(mlx, mlx->asset);
+	mlx_destroy_image(mlx->mlx, mlx->frame->back.img);
+	mlx_destroy_image(mlx->mlx, mlx->frame->front.img);
+	mlx_destroy_image(mlx->mlx, mlx->frame->frame.img);
+	if (mlx->map->collect_str)
+		free(mlx->map->collect_str);
+	if (mlx->steps_str)
+		free(mlx->steps_str);
+	if (mlx->asset)
+		free(mlx->asset);
+	if (mlx->timer)
+		free(mlx->timer);
 	delete_map(mlx->map->map, 0);
+	delete_map(mlx->map->collisions, 0);
+	sleep (1);
 	mlx_destroy_window(mlx->mlx, mlx->window);
 	mlx_destroy_display(mlx->mlx);
 	free(mlx->mlx);
-	sleep (3);
 	exit(0);
 }

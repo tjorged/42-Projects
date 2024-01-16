@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   assets_initializer.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/16 12:17:10 by tjorge-d          #+#    #+#             */
+/*   Updated: 2024/01/16 12:17:21 by tjorge-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
-static void xpm_paths_2(t_image *asset)
+static void	xpm_paths_2(t_image *asset)
 {
-    asset[AU].path = "./assets/entities/xpm/u.xpm";
+	asset[AU].path = "./assets/entities/xpm/u.xpm";
 	asset[AU1].path = "./assets/entities/xpm/u1.xpm";
 	asset[AU2].path = "./assets/entities/xpm/u2.xpm";
 	asset[AD].path = "./assets/entities/xpm/d.xpm";
@@ -58,13 +70,13 @@ static void	img_sizes(t_image *asset)
 	{
 		if (i < 111)
 		{
-			asset[i].height = SIZE;
-			asset[i].width = SIZE;
+			asset[i].height = (128 / SCALER);
+			asset[i].width = (128 / SCALER);
 		}
 		else
 		{
-			asset[i].height = SIZE / 2;
-			asset[i].width = SIZE / 4;
+			asset[i].height = (128 / SCALER) / 2;
+			asset[i].width = (128 / SCALER) / 4;
 		}
 	}
 }
@@ -78,7 +90,7 @@ static void	imgs_initializer(t_image *asset, t_mlx *mlx)
 	{
 		if (asset[i].path)
 		{
-			asset[i].img = mlx_xpm_file_to_image(mlx->mlx, 
+			asset[i].img = mlx_xpm_file_to_image(mlx->mlx, \
 				asset[i].path, &asset[i].width, &asset[i].height);
 		}
 	}
@@ -87,26 +99,31 @@ static void	imgs_initializer(t_image *asset, t_mlx *mlx)
 	{
 		if (asset[i].path)
 		{
-			asset[i].addr = mlx_get_data_addr(asset[i].img, 
+			asset[i].addr = mlx_get_data_addr(asset[i].img, \
 				&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
 		}
 	}
 }
 
-t_image *assets_initializer(t_mlx *mlx)
+t_image	*assets_initializer(t_mlx *mlx, t_map *map)
 {
 	int			i;
-	t_image     *asset;
+	t_image		*asset;
 
-    asset = malloc(sizeof(t_image) * 128);
-    if (!asset)
-        return (NULL);
+	mlx->s = (128 / SCALER);
+	asset = malloc(sizeof(t_image) * 128);
+	if (!asset)
+	{
+		delete_map(map->map, 'a');
+		delete_map(map->collisions, 'e');
+		free(mlx->mlx);
+	}
 	i = -1;
 	while (++i < 128)
 		asset[i].path = NULL;
-    xpm_paths_1(asset);
+	xpm_paths_1(asset);
 	xpm_paths_2(asset);
 	img_sizes(asset);
 	imgs_initializer(asset, mlx);
-    return (asset);
+	return (asset);
 }

@@ -1,10 +1,10 @@
 NAME= so_long
 
 CC= cc
-CFLAGS= -g	
+CFLAGS= -Wall -Werror -Wextra -g	
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= assets_initializer.c layers_creator.c main.c mapper.c mapper_utils.c error_handler.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c exit.c
+SOURCES= assets_initializer.c layers_creator.c main.c mapper.c so_long_utils.c error_handler.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c exit.c borders.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))

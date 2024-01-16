@@ -14,9 +14,9 @@
 
 void	corners(t_map *map, int y, int x)
 {
-	if (map->collisions[y - 1][x - 1]== '1' && map->collisions[y - 1][x] == '1' 
+	if (map->collisions[y][x] == '1' && map->collisions[y - 1][x] == '1' 
 	&& ground(map->map[y - 1][x + 1]) && map->collisions[y][x - 1] == '1' 
-	&& map->collisions[y][x] == '1' && map->collisions[y][x + 1] == '1'
+	&& map->collisions[y - 1][x - 1] == '1' && map->collisions[y][x + 1] == '1'
 	&& map->collisions[y + 1][x - 1] == '1' && map->collisions[y + 1][x] == '1' 
 	&& map->collisions[y + 1][x + 1] == '1')
 		map->map[y][x] = 1;
@@ -42,17 +42,25 @@ void	corners(t_map *map, int y, int x)
 
 void	inner_corners2(t_map *map, int y, int x)
 {
-	if ((map->map[y + 1][x] == 6 || map->map[y + 1][x] == 11) 
-		&& (map->map[y][x + 1] == 2 || map->map[y][x + 1] == 99))
+	if ((map->map[y + 1][x] == 6 || map->map[y + 1][x] == 11 \
+		|| map->map[y + 1][x] == 3) \
+		&& (map->map[y][x + 1] == 2 || map->map[y][x + 1] == 99 \
+		|| map->map[y][x + 1] == 3))
 		map->map[y][x] = 77;
-	else if ((map->map[y + 1][x] == 4 || map->map[y + 1][x] == 33) 
-		&& (map->map[y][x - 1] == 2 || map->map[y][x - 1] == 77))
+	else if ((map->map[y + 1][x] == 4 || map->map[y + 1][x] == 33 \
+		|| map->map[y + 1][x] == 1) \
+		&& (map->map[y][x - 1] == 2 || map->map[y][x - 1] == 77 \
+		|| map->map[y][x - 1] == 1))
 		map->map[y][x] = 99;
-	else if ((map->map[y][x - 1] == 8 || map->map[y][x - 1] == 11) 
-		&& (map->map[y - 1][x] == 4 || map->map[y - 1][x] == 99))
+	else if ((map->map[y][x - 1] == 8 || map->map[y][x - 1] == 11 \
+		|| map->map[y][x - 1] == 7) \
+		&& (map->map[y - 1][x] == 4 || map->map[y - 1][x] == 99 \
+		|| map->map[y - 1][x] == 7))
 		map->map[y][x] = 33;
-	else if ((map->map[y - 1][x] == 6 || map->map[y - 1][x] == 77) 
-		&& (map->map[y][x + 1] == 8 || map->map[y][x + 1] == 33))
+	else if ((map->map[y - 1][x] == 6 || map->map[y - 1][x] == 77 \
+		|| map->map[y - 1][x] == 9) \
+		&& (map->map[y][x + 1] == 8 || map->map[y][x + 1] == 33 \
+		|| map->map[y][x + 1] == 9))
 		map->map[y][x] = 11;
 }
 
@@ -80,9 +88,9 @@ void	inner_corners(t_map *map, int y, int x)
 		map->map[y][x] = 77;
 }
 
-static void		borders2(t_map *map, int y, int x)
+static void	borders2(t_map *map, int y, int x)
 {
-		while(x >= 0)
+	while (x >= 0)
 	{
 		if (ground(map->map[y - 1][x]))
 			map->map[y][x] = 2;
@@ -93,7 +101,7 @@ static void		borders2(t_map *map, int y, int x)
 		x--;
 	}
 	x++;
-	while(y >= 0)
+	while (y >= 0)
 	{
 		if (ground(map->map[y][x + 1]))
 			map->map[y][x] = 4;
@@ -118,7 +126,7 @@ void	borders(t_map *map, int y, int x)
 		x++;
 	}
 	x--;
-	while(y < map->height)
+	while (y < map->height)
 	{
 		if (ground(map->map[y][x - 1]))
 			map->map[y][x] = 6;

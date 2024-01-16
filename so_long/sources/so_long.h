@@ -35,23 +35,18 @@ typedef enum e_type {
 	LEFT = 97,
 	DOWN = 115,
 	RIGHT = 100
-} t_type;
+}	t_type;
 
 # define SCALER 1
-# define SPEED (6 / SCALER)
-# define SWITCH_SPEED (100 / (SPEED * 2))
 # define FRAME_RATE 60
-# define SIZE (128/SCALER)
-# define PLAYER_X (mlx->frame->player_x / SIZE)
-# define PLAYER_Y (mlx->frame->player_y / SIZE)
 
-typedef struct	s_timeval
+typedef struct s_timeval
 {
-	time_t			tv_sec;   //used for seconds
-	suseconds_t		tv_usec;   //used for microseconds
+	time_t			tv_sec;
+	suseconds_t		tv_usec;
 }	t_timeval;
 
-typedef struct	s_image
+typedef struct s_image
 {
 	void	*img;
 	char	*addr;
@@ -63,7 +58,7 @@ typedef struct	s_image
 	int		width;
 }	t_image;
 
-typedef struct	s_frame
+typedef struct s_frame
 {
 	t_image		back;
 	t_image		player;
@@ -79,6 +74,7 @@ typedef struct s_map
 {
 	char	**map;
 	char	**collisions;
+	char	*collect_str;
 	int		collect;
 	int		height;
 	int		width;
@@ -92,59 +88,69 @@ typedef struct s_mlx
 {
 	void		*mlx;
 	void		*window;
-	t_frame 	*frame;
+	t_frame		*frame;
 	t_map		*map;
 	t_image		*asset;
 	t_timeval	*timer;
 	long		frame_time;
+	int			steps;
+	char		*steps_str;
+	int			s;
+	int			mov;
+	int			x;
+	int			y;
 }	t_mlx;
 
-
-
 //error_handler.c
-void	delete_map(char **map, char mode);
-void	end_game(t_mlx *mlx);
+void			destroy_assets(t_mlx *mlx, t_image *asset);
+void			delete_map(char **map, char mode);
+void			end_game(t_mlx *mlx);
 
-//mapper_utils.c
-void	coord_finder(t_map *map);
+//so_long_utils.c
+void			coord_finder(t_map *map);
 
 //map_checker.c
-void	map_checker(t_map *map);
+void			map_checker(t_map *map);
 
 //mapper.c
-void	**mapper(char *file, t_map *map);
+void			**mapper(char *file, t_map *map);
 
 //map_transformer_utils.c
-void	transform(t_map *map, int y, int x);
-int		ground(char current);
+void			transform(t_map *map, int y, int x);
+int				ground(char current);
 
 //map_transformer.c
-void	inner_corners(t_map *map, int y, int x);
-void	inner_corners2(t_map *map, int y, int x);
-void	corners(t_map *map, int y, int x);
-void	borders(t_map *map, int y, int x);
+void			inner_corners(t_map *map, int y, int x);
+void			inner_corners2(t_map *map, int y, int x);
+void			corners(t_map *map, int y, int x);
+void			borders(t_map *map, int y, int x);
 
 //assets_initializer.c
-t_image 		*assets_initializer(t_mlx *mlx);
+t_image			*assets_initializer(t_mlx *mlx, t_map *map);
 
 //layers_creator.c
-void	layers_creator(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
-void	image_into_img(t_image *asset, t_image *image, int x1, int y1);
+void			layers_creator(t_frame *frame, t_map *map, \
+					t_mlx *mlx, t_image *asset);
+void			to_img(t_image *asset, t_image *image, int x1, int y1);
 
 //frame_painter.c
-void			refresh_back_frame(t_frame *frame, t_map *map, t_mlx *mlx, t_image *asset);
-unsigned int	get_color(t_image *img, int x, int y);
+void			refresh_back(t_frame *frame, t_map *map, \
+					t_mlx *mlx, t_image *asset);
 void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
-void 			render(t_mlx *mlx, t_frame *frame);
+void			render(t_mlx *mlx, t_frame *frame);
+void			print_coll_n_steps(t_mlx *mlx);
 
 //hooks.c
-int		key_press(int keycode, t_mlx *mlx);
-int		key_release(int keycode, t_mlx *mlx);
+int				key_press(int keycode, t_mlx *mlx);
+int				key_release(int keycode, t_mlx *mlx);
 
-//main.c
+//borders.c
+void			borders_refiner(t_map *map, int y, int x);
+
 //loop.c
-int		game_loop(t_mlx *mlx);
+int				game_loop(t_mlx *mlx);
 
 //exit_check.c
-void	exit_check(t_mlx *mlx);
+void			exit_check(t_mlx *mlx);
+unsigned int	get_color(t_image *img, int x, int y);
 #endif

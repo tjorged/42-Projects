@@ -24,7 +24,7 @@ int	ground(char current)
 		return (0);
 }
 
-static void		walls(t_map *map, int y, int x)
+static void	walls(t_map *map, int y, int x)
 {
 	if (ground(map->map[y - 1][x]) && map->collisions[y][x - 1] == '1' 
 	&& map->collisions[y][x] == '1' && map->collisions[y][x + 1] == '1'
@@ -48,7 +48,7 @@ static void		walls(t_map *map, int y, int x)
 		map->map[y][x] = 8;
 }
 
-static void		doors(t_map *map, int y, int x)
+static void	doors(t_map *map, int y, int x)
 {
 	if ((map->collisions[y][x] == 'E' || map->collisions[y][x] == 'P') 
 	&& map->map[y - 1][x] == 8)
@@ -68,11 +68,11 @@ static void		doors(t_map *map, int y, int x)
 		map->map[y][x] = '0';
 		map->map[y][x - 1] = 44;
 	}
-	else if ( map->collisions[y][x] == 'P')
+	else if (map->collisions[y][x] == 'P')
 		map->map[y][x] = 'E';
 }
 
-static void		singles(t_map *map, int y, int x)
+static void	singles(t_map *map, int y, int x)
 {
 	while (++y < (map->height - 1))
 	{
@@ -82,11 +82,14 @@ static void		singles(t_map *map, int y, int x)
 			if (map->collisions[y][x] == '1' 
 			&& !((map->collisions[y - 1][x - 1] == '1' 
 			&& map->collisions[y - 1][x] == '1'
-			&& map->collisions[y][x - 1] == '1' && map->collisions[y][x] == '1') 
+			&& map->collisions[y][x - 1] == '1' \
+			&& map->collisions[y][x] == '1') 
 			|| (map->collisions[y - 1][x] == '1' 
 			&& map->collisions[y - 1][x + 1] == '1'
-			&& map->collisions[y][x] == '1' && map->collisions[y][x + 1] == '1') 
-			|| (map->collisions[y][x - 1] == '1' && map->collisions[y][x] == '1' 
+			&& map->collisions[y][x] == '1' \
+			&& map->collisions[y][x + 1] == '1') 
+			|| (map->collisions[y][x - 1] == '1' \
+			&& map->collisions[y][x] == '1' 
 			&& map->collisions[y + 1][x - 1] == '1' 
 			&& map->collisions[y + 1][x] == '1') 
 			|| (map->collisions[y][x] == '1' && map->collisions[y][x + 1] == '1'
@@ -118,8 +121,7 @@ void	transform(t_map *map, int y, int x)
 			inner_corners2(map, y, x);
 	}
 	borders(map, 0, 0);
-	printf("ey = %i\nex = %i\n\n", map->exit_y, map->exit_x);
-	printf("ey = %i\nex = %i\n\n", map->player_y, map->player_x);
+	borders_refiner(map, 0, 1);
 	doors(map, map->exit_y, map->exit_x);
 	doors(map, map->player_y, map->player_x);
 }
