@@ -2,11 +2,16 @@
 
 static void	state_refresher(t_mlx *mlx, int state)
 {
-	mlx->frame->player_state = state;
+	if (state == UP)
+		mlx->frame->player_state_y--;
+	else if (state == LEFT)
+		mlx->frame->player_state_x--;
+	else if (state == DOWN)
+		mlx->frame->player_state_y++;
+	else if (state == RIGHT)
+		mlx->frame->player_state_x++;
 	mlx->frame->movement_count = 0;
-	mlx->steps++;
-	free(mlx->steps_str);
-	mlx->steps_str = ft_itoa(mlx->steps);
+	mlx->step_bol = 1;
 }
 
 int	key_press(int keycode, t_mlx *mlx)
@@ -36,25 +41,25 @@ int	key_press(int keycode, t_mlx *mlx)
 
 int	key_release(int keycode, t_mlx *mlx)
 {
-	if (keycode == UP && mlx->frame->player_state == UP)
+	if (keycode == UP)
 	{
-		mlx->frame->player = mlx->asset[AU];
-		mlx->frame->player_state = 0;
+	//	mlx->frame->player = mlx->asset[AU];
+		mlx->frame->player_state_y++;
 	}
-	if (keycode == LEFT && mlx->frame->player_state == LEFT)
+	if (keycode == LEFT)
 	{
-		mlx->frame->player = mlx->asset[AL];
-		mlx->frame->player_state = 0;
+	//	mlx->frame->player = mlx->asset[AL];
+		mlx->frame->player_state_x++;
 	}
-	if (keycode == DOWN && mlx->frame->player_state == DOWN)
+	if (keycode == DOWN)
 	{
-		mlx->frame->player = mlx->asset[AD];
-		mlx->frame->player_state = 0;
+	//	mlx->frame->player = mlx->asset[AD];
+		mlx->frame->player_state_y--;
 	}
-	if (keycode == RIGHT && mlx->frame->player_state == RIGHT)
+	if (keycode == RIGHT)
 	{
-		mlx->frame->player = mlx->asset[AR];
-		mlx->frame->player_state = 0;
+	//	mlx->frame->player = mlx->asset[AR];
+		mlx->frame->player_state_x--;
 	}
 	if (keycode == 65307)
 		end_game(mlx);

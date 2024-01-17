@@ -18,6 +18,8 @@
 # include "../libft/libft.h"
 # include <sys/time.h>
 
+#define malloc(x) NULL 
+
 typedef enum e_type {
 	AD = 111,
 	AD1 = 112,	
@@ -38,6 +40,7 @@ typedef enum e_type {
 }	t_type;
 
 # define SCALER 1
+# define SIZE (128/ SCALER)
 # define FRAME_RATE 60
 
 typedef struct s_timeval
@@ -64,7 +67,8 @@ typedef struct s_frame
 	t_image		player;
 	int			player_x;
 	int			player_y;
-	int			player_state;
+	int			player_state_x;
+	int			player_state_y;
 	int			movement_count;
 	t_image		front;
 	t_image		frame;
@@ -94,6 +98,7 @@ typedef struct s_mlx
 	t_timeval	*timer;
 	long		frame_time;
 	int			steps;
+	int			step_bol;
 	char		*steps_str;
 	int			s;
 	int			mov;
@@ -139,6 +144,7 @@ void			refresh_back(t_frame *frame, t_map *map, \
 void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
 void			render(t_mlx *mlx, t_frame *frame);
 void			print_coll_n_steps(t_mlx *mlx);
+unsigned int	get_color(t_image *img, int x, int y);
 
 //hooks.c
 int				key_press(int keycode, t_mlx *mlx);
@@ -152,5 +158,4 @@ int				game_loop(t_mlx *mlx);
 
 //exit_check.c
 void			exit_check(t_mlx *mlx);
-unsigned int	get_color(t_image *img, int x, int y);
 #endif
