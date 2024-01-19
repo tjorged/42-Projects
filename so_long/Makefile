@@ -4,7 +4,7 @@ CC= cc
 CFLAGS= -Wall -Werror -Wextra -g	
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= assets_initializer.c layers_creator.c main.c mapper.c so_long_utils.c error_handler.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c exit.c borders.c
+SOURCES= assets_initializer.c layers_creator.c main.c mapper.c so_long_utils.c map_checker.c map_transformer.c map_transformer_utils.c frame_painter.c hooks.c loop.c exit.c borders.c loop_helper.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))

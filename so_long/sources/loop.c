@@ -1,53 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   loop.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/18 17:49:15 by tjorge-d          #+#    #+#             */
+/*   Updated: 2024/01/18 17:49:18 by tjorge-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
-char	coll_pivot(t_mlx *mlx, int offset_y, int offset_x)
+static void	asset_switcher(t_mlx *mlx, int mode, int step)
 {
-	return (mlx->map->collisions[(mlx->frame->player_y + offset_y) / mlx->s][(mlx->frame->player_x + offset_x)/ mlx->s]);
-}
-
-int		y_walls(t_mlx *mlx)
-{
-	int		n;
-	
-	n = 0;
-	while (mlx->frame->player_state_y == -1 && (coll_pivot(mlx, mlx->s * 3 / 8, 0) == '1' \
-	|| coll_pivot(mlx, mlx->s * 3 / 8, mlx->s * 2 / 8) == '1'))
-	{
-		mlx->frame->player_y++;
-		n++;
-	}
-	while (mlx->frame->player_state_y == 1 && (coll_pivot(mlx, mlx->s * 4 / 8, 0) == '1' \
-	|| coll_pivot(mlx, mlx->s * 4 / 8, mlx->s * 2 / 8) == '1'))
-	{
-		mlx->frame->player_y--;
-		n++;
-	}
-	return (n);
-}
-
-int		x_walls(t_mlx *mlx)
-{
-	int		n;
-	
-	n = 0;
-	while (mlx->frame->player_state_x == -1 && (coll_pivot(mlx, mlx->s * 4 / 8, 0) == '1' \
-	|| coll_pivot(mlx, mlx->s * 3 / 8, 0) == '1'))
-	{
-		mlx->frame->player_x++;
-		n++;
-	}
-	while (mlx->frame->player_state_x == 1 && (coll_pivot(mlx, mlx->s * 4 / 8, mlx->s * 2 / 8) == '1' \
-	|| coll_pivot(mlx, mlx->s * 3 / 8, mlx->s * 2 / 8) == '1'))
-	{
-		mlx->frame->player_x--;
-		n++;
-	}
-	return (n);
-}
-
-static void	asset_switcher(t_mlx *mlx, int mode)
-{
-	if (mode == 1) 
+	if (mode == 2) 
 	{
 		if (mlx->frame->player_state_y == -1)
 			mlx->frame->player = mlx->asset[AU2];
@@ -58,7 +25,7 @@ static void	asset_switcher(t_mlx *mlx, int mode)
 		if (mlx->frame->player_state_x == 1)
 			mlx->frame->player = mlx->asset[AR2];
 	}
-	else if (mode == 2) 
+	else if (mode == 1) 
 	{
 		if (mlx->frame->player_state_y == -1)
 			mlx->frame->player = mlx->asset[AU1];
@@ -68,12 +35,12 @@ static void	asset_switcher(t_mlx *mlx, int mode)
 			mlx->frame->player = mlx->asset[AL1];
 		if (mlx->frame->player_state_x == 1)
 			mlx->frame->player = mlx->asset[AR1];
-		mlx->frame->movement_count = 0;
 	}
-	mlx->step_bol = 1;
+	if (step)
+		mlx->step_bol = 1;
 }
 
-static int		movement_maker(t_mlx *mlx, int x_wall, int y_wall)
+static int	movement_maker(t_mlx *mlx, int x_wall, int y_wall)
 {
 	if (mlx->frame->player_state_x != 0 \
 	&& mlx->frame->player_state_y != 0)
@@ -88,13 +55,13 @@ static int		movement_maker(t_mlx *mlx, int x_wall, int y_wall)
 	if (mlx->frame->player_state_x == 1)
 		mlx->frame->player_x += mlx->mov;
 	x_wall = x_walls(mlx);
-	mlx->mov = ((650 / SCALER) / FRAME_RATE);
+	mlx->mov = ((SPEED / SCALER) / (FRAME_RATE / 30));
 	mlx->frame->movement_count++;
 	if (x_wall != 0 && y_wall != 0)
 		return (x_wall + y_wall);
-	if(x_wall != 0 && mlx->frame->player_state_y != 0)
+	if (x_wall != 0 && mlx->frame->player_state_y != 0)
 		return (0);
-	if(y_wall != 0 && mlx->frame->player_state_x != 0)
+	if (y_wall != 0 && mlx->frame->player_state_x != 0)
 		return (0);
 	return (x_wall + y_wall);
 }
@@ -104,17 +71,22 @@ static void	player_movement(t_mlx *mlx)
 	int	wall;
 
 	wall = -1;
+	if (mlx->frame->movement_count == 0)
+		asset_switcher(mlx, 1, 0);
 	if (mlx->frame->player_state_y != 0 || mlx->frame->player_state_x != 0)
 		wall = movement_maker(mlx, 0, 0);
-	if (mlx->frame->movement_count == (100 / (mlx->mov * 2)))
-		asset_switcher(mlx, 1);
-	else if (mlx->frame->movement_count == (100 / (mlx->mov * 2)) * 2)
-		asset_switcher(mlx, 2);
+	if (mlx->frame->movement_count == (SPEED * (FRAME_RATE / 30)))
+		asset_switcher(mlx, 2, 1);
+	else if (mlx->frame->movement_count == (SPEED * (FRAME_RATE / 30) * 2))
+	{
+		asset_switcher(mlx, 1, 1);
+		mlx->frame->movement_count = 0;
+	}
 	if (wall == 0 && mlx->step_bol == 1)
 	{
 		mlx->steps++;
 		free(mlx->steps_str);
-			mlx->steps_str = ft_itoa(mlx->steps); 
+		mlx->steps_str = ft_itoa(mlx->steps); 
 		mlx->step_bol = 0;
 	}
 }

@@ -109,7 +109,7 @@ void	**mapper(char *file, t_map *map)
 		write(2, "INVALID MAP NAME SNAKE!\n", 24);
 		exit(0);
 	}
-	map->collisions = (char **)malloc(sizeof(char *) * (map->height + 1));
+	map->collisions = malloc(sizeof(char *) * (map->height + 1));
 	if (!map->collisions)
 		exit(0);
 	map->collisions[map->height] = NULL;

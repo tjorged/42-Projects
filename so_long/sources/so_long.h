@@ -18,8 +18,6 @@
 # include "../libft/libft.h"
 # include <sys/time.h>
 
-#define malloc(x) NULL 
-
 typedef enum e_type {
 	AD = 111,
 	AD1 = 112,	
@@ -39,9 +37,9 @@ typedef enum e_type {
 	RIGHT = 100
 }	t_type;
 
-# define SCALER 1
-# define SIZE (128/ SCALER)
-# define FRAME_RATE 60
+# define SCALER 2
+# define SPEED 8
+# define FRAME_RATE 30
 
 typedef struct s_timeval
 {
@@ -70,6 +68,7 @@ typedef struct s_frame
 	int			player_state_x;
 	int			player_state_y;
 	int			movement_count;
+	int			current_asset;
 	t_image		front;
 	t_image		frame;
 }	t_frame;
@@ -106,13 +105,13 @@ typedef struct s_mlx
 	int			y;
 }	t_mlx;
 
-//error_handler.c
+//so_long_utils.c
+void			coord_finder(t_map *map);
 void			destroy_assets(t_mlx *mlx, t_image *asset);
 void			delete_map(char **map, char mode);
 void			end_game(t_mlx *mlx);
-
-//so_long_utils.c
-void			coord_finder(t_map *map);
+void			vars_init(t_frame *frame, t_map *map, \
+					t_mlx *mlx, t_image *asset);
 
 //map_checker.c
 void			map_checker(t_map *map);
@@ -139,11 +138,11 @@ void			layers_creator(t_frame *frame, t_map *map, \
 void			to_img(t_image *asset, t_image *image, int x1, int y1);
 
 //frame_painter.c
-void			refresh_back(t_frame *frame, t_map *map, \
-					t_mlx *mlx, t_image *asset);
 void			my_mlx_pixel_put(t_image *img, int x, int y, int color);
 void			render(t_mlx *mlx, t_frame *frame);
 void			print_coll_n_steps(t_mlx *mlx);
+void			refresh_back(t_frame *frame, t_map *map, \
+					t_mlx *mlx, t_image *asset);
 unsigned int	get_color(t_image *img, int x, int y);
 
 //hooks.c
@@ -158,4 +157,10 @@ int				game_loop(t_mlx *mlx);
 
 //exit_check.c
 void			exit_check(t_mlx *mlx);
+
+//loop_helper.c
+char			coll_pivot(t_mlx *mlx, int offset_y, int offset_x);
+int				y_walls(t_mlx *mlx);
+int				x_walls(t_mlx *mlx);
+
 #endif

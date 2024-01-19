@@ -81,7 +81,7 @@ static void	img_sizes(t_image *asset)
 	}
 }
 
-static void	imgs_initializer(t_image *asset, t_mlx *mlx)
+static void	imgs_initializer(t_map *map, t_image *asset, t_mlx *mlx)
 {
 	int	i;
 
@@ -92,15 +92,15 @@ static void	imgs_initializer(t_image *asset, t_mlx *mlx)
 		{
 			asset[i].img = mlx_xpm_file_to_image(mlx->mlx, \
 				asset[i].path, &asset[i].width, &asset[i].height);
-		}
-	}
-	i = -1;
-	while (++i < 128)
-	{
-		if (asset[i].path)
-		{
+			if (!asset[i].img)
+			{
+				destroy_assets(mlx, asset);
+				free(mlx->mlx);
+				delete_map(map->map, 'a');
+				delete_map(map->collisions, 'e');
+			}
 			asset[i].addr = mlx_get_data_addr(asset[i].img, \
-				&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
+			&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
 		}
 	}
 }
@@ -114,9 +114,9 @@ t_image	*assets_initializer(t_mlx *mlx, t_map *map)
 	asset = malloc(sizeof(t_image) * 128);
 	if (!asset)
 	{
+		free(mlx->mlx);
 		delete_map(map->map, 'a');
 		delete_map(map->collisions, 'e');
-		free(mlx->mlx);
 	}
 	i = -1;
 	while (++i < 128)
@@ -124,6 +124,6 @@ t_image	*assets_initializer(t_mlx *mlx, t_map *map)
 	xpm_paths_1(asset);
 	xpm_paths_2(asset);
 	img_sizes(asset);
-	imgs_initializer(asset, mlx);
+	imgs_initializer(map, asset, mlx);
 	return (asset);
 }
