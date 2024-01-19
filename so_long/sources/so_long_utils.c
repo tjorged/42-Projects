@@ -91,7 +91,7 @@ void	destroy_assets(t_mlx *mlx, t_image *asset)
 	}
 }
 
-void	end_game(t_mlx *mlx)
+int	end_game(t_mlx *mlx)
 {
 	mlx_do_key_autorepeaton(mlx->mlx);
 	destroy_assets(mlx, mlx->asset);
@@ -113,4 +113,5 @@ void	end_game(t_mlx *mlx)
 	mlx_destroy_display(mlx->mlx);
 	free(mlx->mlx);
 	exit(0);
+	return (0);
 }

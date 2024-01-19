@@ -106,10 +106,10 @@ typedef struct s_mlx
 }	t_mlx;
 
 //so_long_utils.c
+int				end_game(t_mlx *mlx);
 void			coord_finder(t_map *map);
 void			destroy_assets(t_mlx *mlx, t_image *asset);
 void			delete_map(char **map, char mode);
-void			end_game(t_mlx *mlx);
 void			vars_init(t_frame *frame, t_map *map, \
 					t_mlx *mlx, t_image *asset);
 

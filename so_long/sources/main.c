@@ -33,6 +33,7 @@ int	main(int argc, char *argv[])
 		free(mlx.mlx), destroy_assets(&mlx, asset), 1);
 	layers_creator(&frame, &map, &mlx, asset);
 	vars_init(&frame, &map, &mlx, asset);
+	mlx_hook(mlx.window, DestroyNotify, StructureNotifyMask, &end_game, &mlx);
 	mlx_hook(mlx.window, KeyPress, KeyPressMask, &key_press, &mlx);
 	mlx_hook(mlx.window, KeyRelease, KeyReleaseMask, &key_release, &mlx);
 	mlx_loop_hook(mlx.mlx, game_loop, &mlx);

@@ -98,12 +98,11 @@ static void	wall_checker(t_map *map, int y, int x, int max_y)
 {
 	while (y <= max_y)
 	{
-		if (map->collisions[y][0] != '1' 
+		if (map->collisions[y][0] != '1' \
 		|| map->collisions[y][ft_strlen(map->collisions[y]) - 2] != '1')
 			delete_map(map->collisions, 'e');
-		if (y != max_y && 
-			ft_strlen(map->collisions[y]) 
-			!= ft_strlen(map->collisions[y + 1]))
+		if (y != max_y && ft_strlen(map->collisions[y]) \
+		!= ft_strlen(map->collisions[y + 1]))
 			delete_map(map->collisions, 'e');
 		y++;
 	}
