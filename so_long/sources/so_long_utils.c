@@ -72,9 +72,11 @@ void	delete_map(char **map, char mode)
 	while (map[++i])
 		free(map[i]);
 	free(map);
-	if (mode == 'e')
+	if (mode == 'e' || mode == 'c')
 	{
-		write(2, "Invalid map Snake!\n", 19);
+		write(2, "Error\n", 6);
+		if (mode == 'e')
+			ft_printf("Invalid map Snake!\n");
 		exit(0);
 	}
 }

@@ -97,7 +97,7 @@ static void	imgs_initializer(t_map *map, t_image *asset, t_mlx *mlx)
 				destroy_assets(mlx, asset);
 				free(mlx->mlx);
 				delete_map(map->map, 'a');
-				delete_map(map->collisions, 'e');
+				delete_map(map->collisions, 'c');
 			}
 			asset[i].addr = mlx_get_data_addr(asset[i].img, \
 			&asset[i].bpp, &asset[i].line_length, &asset[i].endian);
@@ -116,7 +116,7 @@ t_image	*assets_initializer(t_mlx *mlx, t_map *map)
 	{
 		free(mlx->mlx);
 		delete_map(map->map, 'a');
-		delete_map(map->collisions, 'e');
+		delete_map(map->collisions, 'c');
 	}
 	i = -1;
 	while (++i < 128)

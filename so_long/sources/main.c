@@ -12,6 +12,15 @@
 
 #include "so_long.h"
 
+static int	incorret_args_nb(int argc)
+{
+	write(2, "Error\n", 6);
+	if (argc < 2)
+		return (ft_printf("You need to send a map Snake...\n"));
+	else
+		return (ft_printf("One map Snake... ONE!\n"));
+}
+
 int	main(int argc, char *argv[])
 {
 	t_mlx				mlx;
@@ -20,11 +29,11 @@ int	main(int argc, char *argv[])
 	t_image				*asset;
 
 	if (argc != 2)
-		return (ft_printf("You need to send a map snake...\n"));
+		return (incorret_args_nb(argc));
 	mapper(argv[1], &map);
 	mlx.mlx = mlx_init();
 	if (!mlx.mlx)
-		return (delete_map(map.map, 'a'), delete_map(map.collisions, 'a'), 1);
+		return (delete_map(map.map, '0'), delete_map(map.collisions, 'a'), 1);
 	asset = assets_initializer(&mlx, &map);
 	mlx.window = mlx_new_window(mlx.mlx, map.width * (128 / SCALER), \
 	map.height * (128 / SCALER), "so_long");
