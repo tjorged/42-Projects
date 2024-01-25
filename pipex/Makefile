@@ -4,7 +4,7 @@ CC= cc
 CFLAGS= -g	
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= main.c
+SOURCES= main.c parser.c pipex_utils.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))
