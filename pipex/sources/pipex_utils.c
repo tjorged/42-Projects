@@ -2,6 +2,7 @@
 
 void free_n_exit(t_cmd *cmd)
 {
+	perror(0);
 	free_cmd(cmd);
 	exit(0);	
 }
@@ -27,7 +28,7 @@ void	free_cmd(t_cmd *cmd)
 	int	j;
 
 	j = -1;
-	while (++j < cmd[0].process_nb)
+	while (++j <= cmd[0].process_nb)
 	{
 		i = 0;
 		while (cmd[j].arg[i] != NULL)
@@ -38,7 +39,7 @@ void	free_cmd(t_cmd *cmd)
 		}
 		if (cmd[j].arg)
 			free(cmd[j].arg);
-		if (cmd[j].path)
+		if (j != 0 && cmd[j].path)
 			free(cmd[j].path);
 	}
 	free(cmd);
