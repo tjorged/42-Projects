@@ -1,55 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/30 16:30:13 by tjorge-d          #+#    #+#             */
+/*   Updated: 2024/01/30 16:30:15 by tjorge-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-char	**paths_divider(char **envp)
-{
-	char	**paths;
-	int		env_index;
-
-	env_index = -1;
-	while (envp[++env_index] != NULL)
-	{
-		if (ft_strncmp("PATH=", envp[env_index], 5) == 0)
-		{
-			paths = ft_split(envp[env_index], ':');
-			if (!paths)
-				exit(0);
-			paths[0] = (paths[0] + 5);
-			break;
-		}
-	}
-	return (paths);
-}
-
-void add_slash(t_cmd *cmd, int argc)
-{
-	char	*temp;
-	int		i;
-
-	i = -1;
-	while (++i <= argc - 4)
-	{
-		temp = ft_strdup(cmd[i + 1].arg[0]);
-		if (!temp)
-			free_n_exit(cmd);
-		free(cmd[i + 1].arg[0]);
-		cmd[i + 1].arg[0] = ft_strjoin("/", temp);
-		if (!cmd[i + 1].arg[0])
-			free_n_exit(cmd);
-		free(temp);
-	}
-}
-
-t_cmd	*command_allocation(int argc, char **argv)
+static t_cmd	*command_allocation(int argc, char **argv)
 {
 	static t_cmd	*cmd;
-	int		i;
-	int		count;
+	int				i;
 
 	cmd = (t_cmd *)malloc(sizeof(t_cmd) * (argc - 2));
 	if (!cmd)
 	{
 		perror(0);
-		free_n_exit;
+		exit(0);
 	}
 	i = 1;
 	while (++i < argc - 1)
@@ -58,12 +30,11 @@ t_cmd	*command_allocation(int argc, char **argv)
 		if (!cmd[i - 1].arg)
 			free_n_exit(cmd);
 	}
-	add_slash(cmd, argc);
-	cmd[0].process_nb =(argc - 3);
+	cmd[0].process_nb = (argc - 3);
 	return (cmd);
 }
 
-void file_assigner(t_cmd *cmd, char **argv, int argc)
+static void	file_assigner(t_cmd *cmd, char **argv, int argc, int here_doc)
 {
 	cmd[0].arg = (char **)malloc(sizeof(char *) * 3);
 	if (!cmd[0].arg)
@@ -75,27 +46,52 @@ void file_assigner(t_cmd *cmd, char **argv, int argc)
 	if (!cmd[0].arg[1])
 		free_n_exit(cmd);
 	cmd[0].arg[2] = NULL;
-	cmd[0].fd[0] = open(cmd[0].arg[0], O_RDONLY);
-	cmd[0].fd[1] = open(cmd[0].arg[1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (!here_doc)
+	{
+		cmd[0].fd[0] = open(cmd[0].arg[0], O_RDONLY);
+		cmd[0].fd[1] = open(cmd[0].arg[1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	}
+	else
+	{
+		cmd[0].fd[0] = here_docker(cmd);
+		cmd[0].fd[1] = open(cmd[0].arg[1], O_CREAT | O_WRONLY | O_APPEND, 0644);
+	}
 }
 
-t_cmd	*check_command(int argc, char **argv, char **paths)
+void	path_joiner(t_cmd *cmd, char **paths, int i, int j)
 {
-	t_cmd	        *cmd;
-	int				i;
-	int				j;
+	char	*temp;
+
+	temp = ft_strjoin(paths[i], "/");
+	if (!temp)
+	{
+		free_paths(paths);
+		free_n_exit(cmd);
+	}
+	cmd[j - 1].path = ft_strjoin(temp, cmd[j - 1].arg[0]);
+	if (!cmd[j - 1].path)
+	{
+		free_paths(paths);
+		free_n_exit(cmd);
+	}
+	free(temp);
+}
+
+t_cmd	*check_command(int argc, char **argv, char **paths, int here_doc)
+{
+	t_cmd	*cmd;
+	int		i;
+	int		j;
 
 	cmd = command_allocation(argc, argv);
-	file_assigner(cmd, argv, argc);
+	file_assigner(cmd, argv, argc, here_doc);
 	j = 1;
 	while (++j < argc - 1)
 	{
 		i = 0;
 		while (paths[i])
 		{
-			cmd[j - 1].path = ft_strjoin(paths[i], cmd[j - 1].arg[0]);
-			if (!cmd[j - 1].path)
-				free_n_exit(cmd);
+			path_joiner(cmd, paths, i, j);
 			if (access(cmd[j - 1].path, X_OK) == 0)
 				break ;
 			else

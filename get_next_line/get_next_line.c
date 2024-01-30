@@ -30,7 +30,7 @@ char	*get_next_line(int fd)
 
 int	main(void)
 {
-	printf("LINHA: %s", get_next_line(1));
+	printf("LINHA: %s", get_next_line(0));
 	/*fd = open("tes.txt", O_RDONLY);
 	line = get_next_line(fd);
 	printf("1st: %s", line);

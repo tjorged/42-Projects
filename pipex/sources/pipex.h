@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/30 16:29:52 by tjorge-d          #+#    #+#             */
+/*   Updated: 2024/01/30 16:29:56 by tjorge-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 # define PIPEX_H
 # include "../libft/libft.h"
@@ -5,28 +17,25 @@
 
 typedef struct s_cmd
 {
-	char    *path;
-    char    **arg;
-    int     fd[2];
-    int     pipe_id;
-    int     process_id;
+	char	*path;
+	char	**arg;
+	int		fd[2];
+	int		process_id;
 	int		process_nb;
-}   t_cmd;
+}	t_cmd;
 
 //parser.c
-char	**paths_divider(char **envp);
-void    add_slash(t_cmd *cmd, int argc);
-void    file_assigner(t_cmd *cmd, char **argv, int argc);
-t_cmd	*command_allocation(int argc, char **argv);
-t_cmd	*check_command(int argc, char *argv[], char **paths);
+t_cmd	*check_command(int argc, char **argv, char **paths, int here_doc);
 
 //pipex_utils.c
-void    free_n_exit(t_cmd *cmd);
-void    free_paths(char **paths);
+void	free_n_exit(t_cmd *cmd);
+void	free_paths(char **paths);
 void	free_cmd(t_cmd *cmd);
+void	error_msg(char *str, int mode);
 
-//file_names.c
-void	file_name_checker(int argc, char **argv, t_cmd *cmd);
+//pipex.c
+void	pipe_creator(t_cmd *cmd);
+int		here_docker(t_cmd *cmd);
+void	forker(t_cmd *cmd, char **envp);
 
 #endif
-

@@ -17,6 +17,8 @@ size_t	ft_strlen(const char *s)
 	unsigned int	i;
 
 	i = 0;
+	if (!s || !*s)
+		return (i);
 	while (s[i] != '\0')
 		i++;
 	return (i);

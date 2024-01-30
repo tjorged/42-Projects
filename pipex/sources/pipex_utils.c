@@ -1,13 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tjorge-d <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/30 16:30:02 by tjorge-d          #+#    #+#             */
+/*   Updated: 2024/01/30 16:30:05 by tjorge-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-void free_n_exit(t_cmd *cmd)
+void	error_msg(char *str, int mode)
+{
+	char	*msg;
+
+	(void)mode;
+	msg = ft_strjoin(str, ": command not found\n");
+	write(2, msg, ft_strlen(msg));
+	free(msg);
+}
+
+void	free_n_exit(t_cmd *cmd)
 {
 	perror(0);
 	free_cmd(cmd);
-	exit(0);	
+	exit(0);
 }
 
-void free_paths(char **paths)
+void	free_paths(char **paths)
 {
 	int	i;
 

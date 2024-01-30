@@ -32,18 +32,8 @@ char	*get_next_line(int fd)
 {
 	int fd;
 	char *line;
-	fd = open("tes.txt", O_RDONLY);
 	line = get_next_line(fd);
-	printf("1st: %s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("2nd: %s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("3rd: %s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("4th: %s", line);
+	printf("%s", line);
 	free(line);
 	close(fd);
 	return (0);
