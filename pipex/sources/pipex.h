@@ -31,11 +31,11 @@ t_cmd	*check_command(int argc, char **argv, char **paths, int here_doc);
 void	free_n_exit(t_cmd *cmd);
 void	free_paths(char **paths);
 void	free_cmd(t_cmd *cmd);
-void	error_msg(char *str, int mode);
+int		no_input_file(t_cmd *cmd);
 
 //pipex.c
+void	pipes_closer(t_cmd *cmd, int limit);
 void	pipe_creator(t_cmd *cmd);
-int		here_docker(t_cmd *cmd);
 void	forker(t_cmd *cmd, char **envp);
 
 #endif

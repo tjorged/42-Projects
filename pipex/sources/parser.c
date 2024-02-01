@@ -20,7 +20,7 @@ static t_cmd	*command_allocation(int argc, char **argv)
 	cmd = (t_cmd *)malloc(sizeof(t_cmd) * (argc - 2));
 	if (!cmd)
 	{
-		perror(0);
+		perror("Error");
 		exit(0);
 	}
 	i = 1;
@@ -31,7 +31,33 @@ static t_cmd	*command_allocation(int argc, char **argv)
 			free_n_exit(cmd);
 	}
 	cmd[0].process_nb = (argc - 3);
+	i = -1;
+	while (++i <= cmd[0].process_nb)
+		cmd[i].path = NULL;
 	return (cmd);
+}
+
+static int	here_docker(t_cmd *cmd)
+{
+	char	*str;
+	int		fd[2];
+
+	if (pipe(fd) == -1)
+		free_n_exit(cmd);
+	while (1)
+	{
+		str = get_next_line(0);
+		if (!str)
+			free_n_exit(cmd);
+		if (ft_strncmp(cmd[0].arg[0], str, ft_strlen(cmd[0].arg[0])) == 0 \
+		&& ft_strlen(cmd[0].arg[0]) == (ft_strlen(str) - 1))
+			break ;
+		ft_putstr_fd(str, fd[1]);
+		free(str);
+	}
+	free(str);
+	close(fd[1]);
+	return (fd[0]);
 }
 
 static void	file_assigner(t_cmd *cmd, char **argv, int argc, int here_doc)
@@ -49,6 +75,8 @@ static void	file_assigner(t_cmd *cmd, char **argv, int argc, int here_doc)
 	if (!here_doc)
 	{
 		cmd[0].fd[0] = open(cmd[0].arg[0], O_RDONLY);
+		if (cmd[0].fd[0] == -1)
+			cmd[0].fd[0] = no_input_file(cmd);
 		cmd[0].fd[1] = open(cmd[0].arg[1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	}
 	else
@@ -89,7 +117,7 @@ t_cmd	*check_command(int argc, char **argv, char **paths, int here_doc)
 	while (++j < argc - 1)
 	{
 		i = 0;
-		while (paths[i])
+		while (paths && paths[i])
 		{
 			path_joiner(cmd, paths, i, j);
 			if (access(cmd[j - 1].path, X_OK) == 0)

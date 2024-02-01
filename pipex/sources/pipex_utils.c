@@ -24,7 +24,7 @@ void	error_msg(char *str, int mode)
 
 void	free_n_exit(t_cmd *cmd)
 {
-	perror(0);
+	perror("Error");
 	free_cmd(cmd);
 	exit(0);
 }
@@ -33,15 +33,18 @@ void	free_paths(char **paths)
 {
 	int	i;
 
-	i = -1;
-	while (paths[++i])
+	if (paths)
 	{
-		if (i == 0)
-			free((paths[i] - 5));
-		else
-			free(paths[i]);
+		i = -1;
+		while (paths[++i])
+		{
+			if (i == 0)
+				free((paths[i] - 5));
+			else
+				free(paths[i]);
+		}
+		free(paths);
 	}
-	free(paths);
 }
 
 void	free_cmd(t_cmd *cmd)
@@ -65,4 +68,14 @@ void	free_cmd(t_cmd *cmd)
 			free(cmd[j].path);
 	}
 	free(cmd);
+}
+
+int	no_input_file(t_cmd *cmd)
+{
+	int	fd[2];
+
+	if (pipe(fd) == -1)
+		free_n_exit(cmd);
+	close(fd[1]);
+	return (fd[0]); 
 }

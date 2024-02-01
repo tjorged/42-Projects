@@ -18,11 +18,9 @@ static void	file_name_checker(char **argv)
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-	{
 		perror(argv[1]);
-		exit (0);
-	}
-	close(fd);
+	else
+		close(fd);
 }
 
 static int	here_doc_check(char **argv)
@@ -54,6 +52,8 @@ static char	**paths_divider(char **envp)
 
 	paths = NULL;
 	envp_index = -1;
+	if (!envp)
+		return (NULL);
 	while (envp[++envp_index] != NULL)
 	{
 		if (ft_strncmp("PATH=", envp[envp_index], 5) == 0)
@@ -76,7 +76,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd = NULL;
 	if (argc < 5)
 	{
-		write(2, "Error: not enough arguments\n", 28);
+		write(2, "Error: Not enough arguments\n", 28);
 		return (0);
 	}
 	here_doc = here_doc_check(argv);

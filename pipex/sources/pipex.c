@@ -12,40 +12,30 @@
 
 #include "pipex.h"
 
-static void	pipes_closer(t_cmd *cmd)
+static void	error_msg(char *str, t_cmd *cmd)
+{
+	char	*msg;
+
+	msg = ft_strjoin(str, ": command not found\n");
+	if (!msg)
+	{
+		pipes_closer(cmd, cmd[0].process_nb);
+		free_n_exit(cmd);
+	}
+	write(2, msg, ft_strlen(msg));
+	free(msg);
+}
+
+void	pipes_closer(t_cmd *cmd, int limit)
 {
 	int	i;
 
 	i = -1;
-	while (++i < cmd[0].process_nb)
+	while (++i < limit)
 	{
-		if (cmd[i].fd[0])
-			close(cmd[i].fd[0]);
-		if (cmd[i].fd[1])
-			close(cmd[i].fd[1]);
+		close(cmd[i].fd[0]);
+		close(cmd[i].fd[1]);
 	}
-}
-
-int	here_docker(t_cmd *cmd)
-{
-	char	*str;
-	int		fd[2];
-
-	pipe(fd);
-	while (1)
-	{
-		str = get_next_line(0);
-		if (!str)
-			free_n_exit(cmd);
-		if (ft_strncmp(cmd[0].arg[0], str, ft_strlen(cmd[0].arg[0])) == 0 \
-		&& ft_strlen(cmd[0].arg[0]) == (ft_strlen(str) - 1))
-			break ;
-		ft_putstr_fd(str, fd[1]);
-		free(str);
-	}
-	free(str);
-	close(fd[1]);
-	return (fd[0]);
 }
 
 void	pipe_creator(t_cmd *cmd)
@@ -56,7 +46,10 @@ void	pipe_creator(t_cmd *cmd)
 	while (++i < cmd[0].process_nb)
 	{
 		if (pipe(cmd[i].fd) == -1)
+		{
+			pipes_closer(cmd, i);
 			free_n_exit(cmd);
+		}
 	}
 }
 
@@ -67,7 +60,7 @@ static void	proccess_cmd(t_cmd *cmd, char **envp, int i)
 		dup2(cmd[0].fd[1], STDOUT_FILENO);
 	else
 		dup2(cmd[i].fd[1], STDOUT_FILENO);
-	pipes_closer(cmd);
+	pipes_closer(cmd, cmd[0].process_nb);
 	execve(cmd[i].path, cmd[i].arg, envp);
 }
 
@@ -83,14 +76,15 @@ void	forker(t_cmd *cmd, char **envp)
 			free_n_exit(cmd);
 		if (cmd[i].process_id == 0)
 		{
-			if (access(cmd[i].path, X_OK) != 0)
-				error_msg(cmd[i].arg[0], 1);
+			printf("%s", cmd[i].path);
+			if (!cmd[i].path || access(cmd[i].path, X_OK) != 0)
+				error_msg(cmd[i].arg[0], cmd);
 			else
 				proccess_cmd(cmd, envp, i);
 			break ;
 		}
 	}
-	pipes_closer(cmd);
+	pipes_closer(cmd, cmd[0].process_nb);
 	while (waitpid(-1, NULL, WUNTRACED) != -1)
 		;
 }
