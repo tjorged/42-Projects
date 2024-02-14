@@ -76,7 +76,6 @@ void	forker(t_cmd *cmd, char **envp)
 			free_n_exit(cmd);
 		if (cmd[i].process_id == 0)
 		{
-			printf("%s", cmd[i].path);
 			if (!cmd[i].path || access(cmd[i].path, X_OK) != 0)
 				error_msg(cmd[i].arg[0], cmd);
 			else
