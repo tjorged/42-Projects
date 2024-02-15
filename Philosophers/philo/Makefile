@@ -1,10 +1,10 @@
 NAME= philo
 
 CC= cc
-CFLAGS= -Wall -Werror -Wextra -pthread -g
+CFLAGS= -Wall -Werror -Wextra -pthread -g #-fsanitize=thread
 
 SRC= $(addprefix sources/, $(SOURCES))
-SOURCES= main.c parser.c philo_actions.c
+SOURCES= main.c parser.c philo_actions.c philosophers.c threads.c
 
 OBJ_DIR= objects
 OBJ= $(addprefix $(OBJ_DIR)/, $(SRC:sources/%.c=%.o))

@@ -56,10 +56,30 @@ static int	arguments_validator(int argc, char **argv)
 			i++;
 		if (argv[j][i] != '\0')
 		{
-			write (2, "Error: Invalid arguments\n", 19);
+			write (2, "Error: Invalid arguments\n", 26);
 			return (0);
 		}
 	}
+	return (1);
+}
+
+static int	value_initializer(t_table *table, int i)
+{
+	table->philo[i].number = i + 1;
+	table->philo[i].max_number = table->p_nb;
+	table->philo[i].hp = table->tt_die;
+	table->philo[i].alive = 1;
+	table->philo[i].hunger = table->tt_eat;
+	table->philo[i].eating = 0;
+	table->philo[i].meals_left = table->eating_times;
+	table->philo[i].forks = 0;
+	table->philo[i].sleepiness = table->tt_sleep;
+	table->philo[i].sleeping = 0;
+	table->philo[i].thinking = 0;
+	table->philo[i].table = table;
+	table->philo[i].watch = malloc(sizeof(t_timeval));
+	if (!table->philo[i].watch)
+		return (end_program(table, i), 0);
 	return (1);
 }
 
@@ -69,41 +89,29 @@ static int	conception(t_table *table)
 
 	table->philo = malloc(sizeof(t_philo) * table->p_nb);
 	if (!table->philo)
-	{
-		write(2, "Error: failed to allocate memory for the philosophers\n", 55);
 		return (0);
-	}
 	table->fork = malloc(sizeof(t_fork) * table->p_nb);
 	if (!table->fork)
-	{
-		write(2, "Error: failed to allocate memory for the forks\n", 48);
-		free (table->philo);
-		return (0);
-	}
+		return (free (table->philo), 0);
+	table->clock = malloc(sizeof(t_timeval));
+	if (!table->clock)
+		return (free(table->philo), free(table->fork), 0);
 	i = -1;
 	while (++i < table->p_nb)
 	{
-		table->philo[i].number = i + 1;
-		table->philo[i].hp = table->tt_die;
-		table->philo[i].hunger = table->tt_eat;
-		table->philo[i].eating = 0;
-		table->philo[i].meals_left = table->eating_times;
-		table->philo[i].forks = 0;
-		table->philo[i].sleepiness = table->tt_sleep;
-		table->philo[i].sleeping = 0;
-		table->philo[i].thinking = 0;
-		table->philo[i].table = table;
+		if (!value_initializer(table, i))
+			return (0);
 	}
 	return (1);
 }
 
 int	parser(t_table *table, int argc, char **argv)
 {
-	if (argc < 3)
+	if (argc < 5)
 		write(2, "Error: Not enough arguments\n", 29);
 	else if (argc > 6)
 		write(2, "Error: Too many arguments\n", 27);
-	if ((argc < 3 || argc > 6) || !arguments_validator(argc, argv))
+	if ((argc < 5 || argc > 6) || !arguments_validator(argc, argv))
 		return (0);
 	table->p_nb = ft_atoi(argv[1]);
 	table->tt_die = ft_atoi(argv[2]);
@@ -114,6 +122,6 @@ int	parser(t_table *table, int argc, char **argv)
 	else
 		table->eating_times = -1;
 	if (!conception(table))
-		return (0);
+		return (write(2, "Error: failed to allocate memory\n", 34), 0);
 	return (1);
 }
