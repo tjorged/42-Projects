@@ -30,7 +30,7 @@ typedef struct s_philo
 	int					number;
 	int					max_number;
 	long				hp;
-	bool				alive;
+	bool				exit;
 	pthread_mutex_t		mutex;
 	long				life_deadline;
 	long				birth_time;
@@ -38,7 +38,11 @@ typedef struct s_philo
 	bool				eating;
 	long				food_deadline;
 	int					meals_left;
-	int					forks;
+	bool				lfork;
+	bool				rfork;
+	bool				waiting_lfork;
+	bool				waiting_rfork;
+	long				wating_starvation;
 	long				sleepiness;
 	bool				sleeping;
 	long				sleep_deadline;
@@ -76,20 +80,28 @@ int		end_program(t_table *table, int limiter);
 //parcer.c
 int		parser(t_table *table, int argc, char **argv);
 
-//philo_actions.c
-void	philo_thinks(t_philo *philo);
-void	philo_takes_fork(t_philo *philo, int fork_nb);
-void	philo_puts_fork(t_philo *philo, int fork_nb);
-void	philo_eats(t_philo *philo);
-void	philo_sleeps(t_philo *philo);
-void	philo_dies(t_philo *philo);
-
 //threads.c
 int		threads_joiner(t_table *table, int limiter);
 int		threads_creator(t_table *table);
 
 //philosophers.c
-long	get_time(t_philo *philo);
 void	*philo_life(void *arg);
 
+//philo_utils.c
+long	get_time(t_philo *philo);
+int		dead_philo(t_philo *philo);
+void	philo_tries_to_eat(t_philo *philo);
+void	philo_takes_fork(t_philo *philo, int fork_nb, char hand);
+void	philo_puts_fork(t_philo *philo, int fork_nb, char hand);
+
+//philo_actions.c
+void	philo_dies(t_philo *philo, long time);
+void	philo_eats(t_philo *philo);
+void	philo_done_eating(t_philo *philo, long time);
+void	philo_sleeps(t_philo *philo);
+void	philo_thinks(t_philo *philo, long time);
+
+//philosophers.c
+void	*philo_life(void *arg);
+void	kill_all_philos(t_table *table);
 #endif

@@ -68,15 +68,19 @@ static int	value_initializer(t_table *table, int i)
 	table->philo[i].number = i + 1;
 	table->philo[i].max_number = table->p_nb;
 	table->philo[i].hp = table->tt_die;
-	table->philo[i].alive = 1;
+	table->philo[i].exit = 0;
 	table->philo[i].hunger = table->tt_eat;
 	table->philo[i].eating = 0;
 	table->philo[i].meals_left = table->eating_times;
-	table->philo[i].forks = 0;
+	table->philo[i].lfork = 0;
+	table->philo[i].rfork = 0;
+	table->philo[i].waiting_lfork = 0;
+	table->philo[i].waiting_rfork = 0;
 	table->philo[i].sleepiness = table->tt_sleep;
 	table->philo[i].sleeping = 0;
 	table->philo[i].thinking = 0;
 	table->philo[i].table = table;
+	table->philo[i].life_deadline = 0;
 	table->philo[i].watch = malloc(sizeof(t_timeval));
 	if (!table->philo[i].watch)
 		return (end_program(table, i), 0);

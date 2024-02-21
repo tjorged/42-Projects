@@ -53,7 +53,6 @@ int	threads_creator(t_table *table)
 	gettimeofday((struct timeval *)table->clock, NULL);
 	table->start_time = (table->clock->sec * 1000000 \
 		+ table->clock->mil_sec) / 1000;
-	printf("start %li\n", table->start_time);
 	pthread_mutex_unlock(&table->mutex);
 	return (1);
 }

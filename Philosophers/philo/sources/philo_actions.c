@@ -12,99 +12,93 @@
 
 #include "philo.h"
 
-void	philo_thinks(t_philo *philo)
+void	philo_dies(t_philo *philo, long time)
 {
-	long		time;
-
-	time = get_time(philo);
-	printf("%li %i is thinking\n", get_time(philo), philo->number);
-	if (philo->number % 2 != 0)
-	{
-		if (philo->number == philo->max_number)
-			philo_takes_fork(philo, 0);
-		else
-			philo_takes_fork(philo, philo->number);
-		philo_takes_fork(philo, philo->number - 1);
-	}
-	if (philo->number % 2 == 0)
-	{
-		philo_takes_fork(philo, philo->number - 1);
-		if (philo->number == philo->max_number)
-			philo_takes_fork(philo, 0);
-		else
-			philo_takes_fork(philo, philo->number);
-	}
-}
-
-void	philo_takes_fork(t_philo *philo, int fork_nb)
-{
-	pthread_mutex_lock(&philo->table->fork[fork_nb].mutex);
-	philo->forks++;
-	printf("%li %i has taken a fork\n", get_time(philo), philo->number);
-}
-
-void	philo_puts_fork(t_philo *philo, int fork_nb)
-{
-	philo->forks--;
-	pthread_mutex_unlock(&philo->table->fork[fork_nb].mutex);
+	if (dead_philo(philo))
+		return ;
+	philo->table->philo_died = 1;
+	pthread_mutex_lock(&philo->mutex); 
+	philo->exit = 1;
+	pthread_mutex_unlock(&philo->mutex);
+	printf("%li %i died\n", time, philo->number);
+	pthread_mutex_unlock(&philo->table->mutex);
 }
 
 void	philo_eats(t_philo *philo)
 {
 	long	time;
 
+	if (dead_philo(philo))
+		return ;
 	time = get_time(philo);
 	philo->food_deadline = time + philo->hunger;
 	printf("%li %i is eating\n", time, philo->number);
+	pthread_mutex_unlock(&philo->mutex);
 	while (1)
 	{
 		time = get_time(philo);
 		if (time >= philo->life_deadline)
-		{
-			philo_dies(philo);
-			break ;
-		}
+			philo_dies(philo, time);
 		else if (time >= philo->food_deadline)
 		{
-			philo->life_deadline = time + philo->hp;
-			if (philo->number == philo->max_number)
-				philo_puts_fork(philo, 0);
-			else
-				philo_puts_fork(philo, philo->number);
-			philo_puts_fork(philo, philo->number - 1);
-			philo_sleeps(philo);
+			philo_done_eating(philo, time);
 			break ;
 		}
+		pthread_mutex_lock(&philo->mutex);
+		if (philo->exit)
+		{
+			pthread_mutex_unlock(&philo->mutex);
+			break;
+		}
+		pthread_mutex_unlock(&philo->mutex);
 	}
+}
+
+void	philo_done_eating(t_philo *philo, long time)
+{
+	philo->life_deadline = time + philo->hp;
+	if (philo->number == philo->max_number && philo->max_number != 1)
+		philo_puts_fork(philo, 0, 'r');
+	else if (philo->max_number != 1)
+		philo_puts_fork(philo, philo->number, 'r');
+	philo_puts_fork(philo, philo->number - 1, 'l');
+	philo_sleeps(philo);
 }
 
 void	philo_sleeps(t_philo *philo)
 {
 	long		time;
 
+	if (dead_philo(philo))
+		return ;
 	time = get_time(philo);
 	printf("%li %i is sleeping\n", time, philo->number);
 	philo->sleep_deadline = time + philo->sleepiness;
+	pthread_mutex_unlock(&philo->mutex);
 	while (1)
 	{
 		time = get_time(philo);
 		if (time >= philo->life_deadline)
-		{
-			philo_dies(philo);
-			break ;
-		}
+			philo_dies(philo, time);
 		else if (time >= philo->sleep_deadline)
 		{
-			break ;
-			philo_takes_fork(philo, philo->number - 1);
-			philo_takes_fork(philo, philo->number);
-			break ;
+			philo_thinks(philo, time);
+			break;
 		}
+		pthread_mutex_lock(&philo->mutex);
+		if (philo->exit)
+		{
+			pthread_mutex_unlock(&philo->mutex);
+			break;
+		}
+		pthread_mutex_unlock(&philo->mutex);
 	}
 }
 
-void	philo_dies(t_philo *philo)
+void	philo_thinks(t_philo *philo, long time)
 {
-	philo->alive = 0;
-	printf("MATARAM-ME! (%i)\n", philo->number);
+	if (dead_philo(philo))
+		return ;
+	printf("%li %i is thinking\n", time, philo->number);
+	pthread_mutex_unlock(&philo->table->mutex);
 }

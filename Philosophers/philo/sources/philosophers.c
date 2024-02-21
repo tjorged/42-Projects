@@ -12,41 +12,37 @@
 
 #include "philo.h"
 
-long	get_time(t_philo *philo)
-{
-	gettimeofday((struct timeval *)philo->watch, NULL);
-	return ((philo->watch->sec * 1000000 + \
-		philo->watch->mil_sec) / 1000 - philo->birth_time);
-}
-
-static void	first_dinner(t_philo *philo)
-{
-	if (philo->number % 2 != 0)
-	{
-		if (philo->number == philo->max_number)
-			philo_takes_fork(philo, 0);
-		else
-			philo_takes_fork(philo, philo->number);
-		philo_takes_fork(philo, philo->number - 1);
-	}
-	else
-		philo_thinks(philo);
-}
-
 void	routine(t_philo *philo)
 {
 	while (1)
-	{
-		if (philo->forks == 2)
-			philo_eats(philo);
-		else
-			philo_thinks(philo);
-		if (get_time(philo) >= 1500 || !philo->alive)
+	{	
+		pthread_mutex_lock(&philo->mutex);
+		if (philo->exit)
 		{
 			printf("ACABOU!(%i)\n", philo->number);
+			if (philo->rfork)
+			{
+				if (philo->number == philo->max_number && philo->max_number != 1)
+					philo_puts_fork(philo, 0, 'r');
+				else if (philo->max_number != 1)
+					philo_puts_fork(philo, philo->number, 'r');
+			}
+			if (philo->lfork)
+				philo_puts_fork(philo, philo->number - 1, 'l');
+			pthread_mutex_unlock(&philo->mutex);
 			break ;
 		}
+		pthread_mutex_unlock(&philo->mutex);
+		if (philo->rfork && philo->lfork)
+		{
+			philo_eats(philo);
+		}
+		else if (!philo->rfork && !philo->lfork)
+		{
+			philo_tries_to_eat(philo);
+		}
 	}
+	printf("acabou a thread!\n");
 }
 
 void	*philo_life(void *arg)
@@ -55,12 +51,16 @@ void	*philo_life(void *arg)
 
 	philo = (t_philo *)arg;
 	pthread_mutex_lock(&philo->table->mutex);
+	pthread_mutex_lock(&philo->mutex);
 	if (philo->table->error)
-		return (pthread_mutex_unlock(&philo->table->mutex), NULL);
+	{
+		return (pthread_mutex_lock(&philo->mutex), \
+		pthread_mutex_unlock(&philo->table->mutex), NULL);
+	}
 	philo->birth_time = philo->table->start_time;
 	philo->life_deadline = get_time(philo) + philo->table->tt_die;
+	pthread_mutex_unlock(&philo->mutex);
 	pthread_mutex_unlock(&philo->table->mutex);
-	first_dinner(philo);
 	routine(philo);
 	return (NULL);
 }
