@@ -12,37 +12,46 @@
 
 #include "philo.h"
 
+void	wait_two_turns(t_philo *philo)
+{
+	long long	time;
+
+	if (philo->table->p_nb % 2 != 0 && philo->number == philo->table->p_nb)
+	{
+		pthread_mutex_unlock(&philo->table->mutex);
+		while (1)
+		{
+			time = get_time(philo);
+			if (time >= philo->hunger * 2)
+				break ;
+		}
+		pthread_mutex_lock(&philo->table->mutex);
+	}
+}
+
 void	routine(t_philo *philo)
 {
 	while (1)
-	{	
-		pthread_mutex_lock(&philo->mutex);
-		if (philo->exit)
+	{
+		pthread_mutex_lock(&philo->table->mutex);
+		if (philo->exit || !philo->meals_left)
 		{
-			printf("ACABOU!(%i)\n", philo->number);
-			if (philo->rfork)
-			{
-				if (philo->number == philo->max_number && philo->max_number != 1)
-					philo_puts_fork(philo, 0, 'r');
-				else if (philo->max_number != 1)
-					philo_puts_fork(philo, philo->number, 'r');
-			}
-			if (philo->lfork)
-				philo_puts_fork(philo, philo->number - 1, 'l');
-			pthread_mutex_unlock(&philo->mutex);
+			pthread_mutex_unlock(&philo->table->mutex); 
 			break ;
 		}
-		pthread_mutex_unlock(&philo->mutex);
-		if (philo->rfork && philo->lfork)
+		else if (philo->rfork && philo->lfork)
 		{
+			pthread_mutex_unlock(&philo->table->mutex);
 			philo_eats(philo);
 		}
 		else if (!philo->rfork && !philo->lfork)
 		{
+			pthread_mutex_unlock(&philo->table->mutex);
 			philo_tries_to_eat(philo);
 		}
+		else
+			pthread_mutex_unlock(&philo->table->mutex);
 	}
-	printf("acabou a thread!\n");
 }
 
 void	*philo_life(void *arg)
@@ -51,16 +60,11 @@ void	*philo_life(void *arg)
 
 	philo = (t_philo *)arg;
 	pthread_mutex_lock(&philo->table->mutex);
-	pthread_mutex_lock(&philo->mutex);
 	if (philo->table->error)
-	{
-		return (pthread_mutex_lock(&philo->mutex), \
-		pthread_mutex_unlock(&philo->table->mutex), NULL);
-	}
-	philo->birth_time = philo->table->start_time;
-	philo->life_deadline = get_time(philo) + philo->table->tt_die;
-	pthread_mutex_unlock(&philo->mutex);
+		return (pthread_mutex_unlock(&philo->table->mutex), NULL);
+	wait_two_turns(philo);
 	pthread_mutex_unlock(&philo->table->mutex);
+	if (philo)
 	routine(philo);
 	return (NULL);
 }

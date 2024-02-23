@@ -29,24 +29,19 @@ typedef struct s_philo
 {
 	int					number;
 	int					max_number;
-	long				hp;
+	long long			hp;
 	bool				exit;
 	pthread_mutex_t		mutex;
-	long				life_deadline;
-	long				birth_time;
-	long				hunger;
-	bool				eating;
-	long				food_deadline;
+	long long			life_deadline;
+	long long			birth_time;
+	long long			hunger;
+	long long			food_deadline;
 	int					meals_left;
 	bool				lfork;
 	bool				rfork;
-	bool				waiting_lfork;
-	bool				waiting_rfork;
-	long				wating_starvation;
-	long				sleepiness;
-	bool				sleeping;
-	long				sleep_deadline;
-	bool				thinking;
+	long long			sleepiness;
+	long long			sleep_deadline;
+	long long			thinking_deadline;
 	pthread_t			soul;
 	t_timeval			*watch;
 	struct s_table		*table;
@@ -55,12 +50,13 @@ typedef struct s_philo
 typedef struct s_fork
 {
 	pthread_mutex_t		mutex;
+	bool				taken;
 	struct s_table		*table;
 }	t_fork;
 
 typedef struct s_table
 {
-	long				start_time;
+	long long			start_time;
 	bool				error;
 	int					p_nb;
 	int					tt_die;
@@ -88,20 +84,24 @@ int		threads_creator(t_table *table);
 void	*philo_life(void *arg);
 
 //philo_utils.c
-long	get_time(t_philo *philo);
-int		dead_philo(t_philo *philo);
-void	philo_tries_to_eat(t_philo *philo);
-void	philo_takes_fork(t_philo *philo, int fork_nb, char hand);
-void	philo_puts_fork(t_philo *philo, int fork_nb, char hand);
+long long 	get_time(t_philo *philo);
+void		kill_all_philos(t_philo *philo);
+int			send_msg(t_philo *philo, char *msg, long long time);
+void		philo_dies(t_philo *philo, long long time);
+int			im_dead(t_philo *philo, long long time);
+int			has_both_forks(t_philo *philo);
+void		philo_tries_to_eat(t_philo *philo);
+void		philo_takes_fork(t_philo *philo, int fork_nb, char hand);
+void		philo_puts_fork(t_philo *philo, int fork_nb, char hand);
 
 //philo_actions.c
-void	philo_dies(t_philo *philo, long time);
+int		is_philo_dead(t_philo *philo, long long time);
+void	philo_dies(t_philo *philo, long long time);
 void	philo_eats(t_philo *philo);
-void	philo_done_eating(t_philo *philo, long time);
+void	philo_done_eating(t_philo *philo, long long time);
 void	philo_sleeps(t_philo *philo);
-void	philo_thinks(t_philo *philo, long time);
+void	philo_thinks(t_philo *philo);
 
 //philosophers.c
 void	*philo_life(void *arg);
-void	kill_all_philos(t_table *table);
 #endif

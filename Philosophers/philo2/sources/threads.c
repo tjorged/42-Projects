@@ -12,6 +12,29 @@
 
 #include "philo.h"
 
+void	jumpstart(t_table *table)
+{
+	int			i;
+	long long	time;
+
+	i = -1;
+	while (++i < table->p_nb)
+	{
+		table->philo[i].birth_time = table->start_time;
+		time = get_time(&table->philo[i]);
+		table->philo[i].life_deadline = time + table->tt_die;
+		if (table->philo[i].number % 2 == 0)
+		{
+			table->philo[i].lfork = 1;
+			table->fork[i - 1].taken = 1;
+			send_msg(&table->philo[i], "has taken a fork", time);
+			table->philo[i].rfork = 1;
+			table->fork[i].taken = 1;
+			send_msg(&table->philo[i], "has taken a fork", time);
+		}
+	}
+}
+
 int	threads_joiner(t_table *table, int limiter)
 {
 	int		i;
@@ -52,7 +75,8 @@ int	threads_creator(t_table *table)
 	}
 	gettimeofday((struct timeval *)table->clock, NULL);
 	table->start_time = (table->clock->sec * 1000000 \
-		+ table->clock->mil_sec) / 1000;
+		+ table->clock->mil_sec);
+	jumpstart(table);
 	pthread_mutex_unlock(&table->mutex);
 	return (1);
 }
