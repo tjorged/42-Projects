@@ -12,38 +12,6 @@
 
 #include "philo.h"
 
-getitimer{
-
-	while(getime < deadline)
-		usleep(500);
-}
-
-void	philo_takes_fork(t_philo *philo, int fork_nb, int hand)
-{
-	long	time;
-
-	while (1)
-	{
-		pthread_mutex_lock(&philo->table->mutex);
-		pthread_mutex_lock(&philo->table->fork[fork_nb].mutex);
-		time = get_time(philo);
-		if (im_dead(philo, time))
-			break	;
-		if (!philo->table->fork[fork_nb].taken)
-		{
-			philo->table->fork[fork_nb].taken = 1;
-			philo->fork[hand] = 1;
-			send_msg(philo, "has taken a fork", time);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->table->fork[fork_nb].mutex);
-		pthread_mutex_unlock(&philo->table->mutex);
-		usleep(3000);
-	}
-	pthread_mutex_unlock(&philo->table->fork[fork_nb].mutex);
-	pthread_mutex_unlock(&philo->table->mutex);
-}
-
 void	philo_eats(t_philo *philo)
 {
 	int	time;
