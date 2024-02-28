@@ -32,9 +32,6 @@ typedef struct s_philo
 	long				hp;
 	int					exit;
 	long				life_deadline;
-	long				food_deadline;
-	long				sleep_deadline;
-	long				thinking_deadline;
 	long				birth_time;
 	long				hunger;
 	long				sleepiness;
@@ -62,6 +59,7 @@ typedef struct s_table
 	long				tt_eat;
 	long				tt_sleep;
 	int					eating_times;
+	int					exit;
 	t_fork				*fork;
 	t_philo				*philo;
 	t_timeval			*clock;

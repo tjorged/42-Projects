@@ -12,33 +12,10 @@
 
 #include "philo.h"
 
-void	philo_eats(t_philo *philo)
+void	better_usleep(t_philo *philo, long deadline)
 {
-	int	time;
-
-	pthread_mutex_lock(&philo->table->mutex);
-	time = get_time(philo);
-	philo->food_deadline = time + philo->hunger;
-	philo->life_deadline = time + philo->table->tt_die;
-	send_msg(philo, "is eating", time);
-	pthread_mutex_unlock(&philo->table->mutex);
-	while (1)
-	{
-		pthread_mutex_lock(&philo->table->mutex);
-		time = get_time(philo);
-		if (im_dead(philo, time))
-		{
-			pthread_mutex_unlock(&philo->table->mutex);
-			return ;
-		}
-		if (time >= philo->food_deadline)
-		{
-			philo_sleeps(philo, time);
-			return ;
-		}
-		pthread_mutex_unlock(&philo->table->mutex);
-		usleep(2000);
-	}
+	while (get_time(philo) < deadline)
+		usleep(500);
 }
 
 void	leaves_both_forks(t_philo *philo)
@@ -50,8 +27,31 @@ void	leaves_both_forks(t_philo *philo)
 		philo_puts_fork(philo, philo->max_number - 1, 0);
 }
 
-void	philo_sleeps(t_philo *philo, long time)
+void	philo_eats(t_philo *philo)
 {
+	long	time;
+
+	pthread_mutex_lock(&philo->table->mutex);
+	pthread_mutex_lock(&philo->mutex);
+	time = get_time(philo);
+	philo->life_deadline = time + philo->table->tt_die;
+	pthread_mutex_unlock(&philo->mutex);
+	if (!send_msg(philo, "is eating", time))
+	{
+		pthread_mutex_unlock(&philo->table->mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->table->mutex);
+	better_usleep(philo, time + philo->hunger);
+	philo_sleeps(philo, get_time(philo));
+}
+
+void	philo_sleeps(t_philo *philo)
+{
+	long	time;
+
+	pthread_mutex_lock(&philo->table->mutex);
+	time = get_time(philo);
 	philo->meals_left--;
 	leaves_both_forks(philo);
 	if (!philo->meals_left)
@@ -60,48 +60,27 @@ void	philo_sleeps(t_philo *philo, long time)
 		pthread_mutex_unlock(&philo->table->mutex);
 		return ;
 	}
-	philo->sleep_deadline = time + philo->sleepiness;
-	send_msg(philo, "is sleeping", time);
-	pthread_mutex_unlock(&philo->table->mutex);
-	while (1)
+	if (!send_msg(philo, "is sleeping", time))
 	{
-		pthread_mutex_lock(&philo->table->mutex);
-		time = get_time(philo);
-		if (im_dead(philo, time))
-		{
-			pthread_mutex_unlock(&philo->table->mutex);
-			return ;
-		}
-		if (time >= philo->sleep_deadline)
-		{
-			philo_thinks(philo, time);
-			return ;
-		}
 		pthread_mutex_unlock(&philo->table->mutex);
-		usleep(2000);
+		return ;
 	}
+	pthread_mutex_unlock(&philo->table->mutex);
+	better_usleep(philo, time + philo->sleepiness);
+	philo_thinks(philo, get_time(philo));
 }
 
-void	philo_thinks(t_philo *philo, long time)
+void	philo_thinks(t_philo *philo)
 {
-	send_msg(philo, "is thinking", time);
-	philo->thinking_deadline = time + philo->thinkingness;
-	pthread_mutex_unlock(&philo->table->mutex);
-	while (1)
+	long	time;
+
+	pthread_mutex_lock(&philo->table->mutex);
+	time = get_time(philo);
+	(!send_msg(philo, "is thinking", time))
 	{
-		pthread_mutex_lock(&philo->table->mutex);
-		time = get_time(philo);
-		if (im_dead(philo, time))
-		{
-			pthread_mutex_unlock(&philo->table->mutex);
-			return ;
-		}
-		if (time >= philo->thinking_deadline)
-		{
-			pthread_mutex_unlock(&philo->table->mutex);
-			return ;
-		}
 		pthread_mutex_unlock(&philo->table->mutex);
-		usleep(2000);
+		return ;
 	}
+	pthread_mutex_unlock(&philo->table->mutex);
+	better_usleep(philo, time + philo->thinkingness);
 }
