@@ -31,6 +31,7 @@ typedef struct s_philo
 	int					max_number;
 	long				hp;
 	int					exit;
+	int					full;
 	long				life_deadline;
 	long				birth_time;
 	long				hunger;
@@ -47,14 +48,13 @@ typedef struct s_philo
 typedef struct s_fork
 {
 	int					taken;
-	struct s_table		*table;
 	pthread_mutex_t		mutex;
 }	t_fork;
 
 typedef struct s_table
 {
 	long				start_time;
-	int					p_nb;
+	int					nb_of_philos;
 	long				tt_die;
 	long				tt_eat;
 	long				tt_sleep;
@@ -73,31 +73,24 @@ int		end_program(t_table *table, int limiter);
 int		parser(t_table *table, int argc, char **argv);
 
 //threads.c
-int		threads_joiner(t_table *table, int limiter);
 int		threads_creator(t_table *table);
+int		threads_joiner(t_table *table, int limiter);
 
 //philosophers.c
 void	*philo_life(void *arg);
 
 //philo_utils.c
+
+void	better_usleep(t_philo *philo, long deadline);
 long	get_time(t_philo *philo);
-void	kill_all_philos(t_table *table);
 int		send_msg(t_philo *philo, char *msg, long time);
-void	philo_dies(t_philo *philo, long time);
-int		im_dead(t_philo *philo, long time);
-int		has_both_forks(t_philo *philo);
-void	philo_tries_to_eat(t_philo *philo);
 void	philo_takes_fork(t_philo *philo, int fork_nb, int hand);
-void	philo_puts_fork(t_philo *philo, int fork_nb, int hand);
+void	philo_leaves_fork(t_philo *philo, int fork_nb, int hand);
 
 //philo_actions.c
-int		is_philo_dead(t_philo *philo, long time);
-void	philo_dies(t_philo *philo, long time);
 void	philo_eats(t_philo *philo);
-void	philo_done_eating(t_philo *philo, long time);
-void	philo_sleeps(t_philo *philo, long time);
-void	philo_thinks(t_philo *philo, long time);
 
 //philosophers.c
 void	*philo_life(void *arg);
+
 #endif

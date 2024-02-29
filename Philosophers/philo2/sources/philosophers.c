@@ -12,15 +12,33 @@
 
 #include "philo.h"
 
-void	wait_two_turns(t_philo *philo)
+static void	wait_two_turns(t_philo *philo)
 {
-	int	time;
-
-	if (philo->number == philo->table->p_nb && philo->table->p_nb % 2 != 0)
-		better_usleep(philo, get_time(philo) + (philo->hunger * 2))
+	if (philo->number == philo->max_number \
+				&& philo->max_number % 2 != 0 \
+				&& philo->number != 1)
+		better_usleep(philo, get_time(philo) + (philo->hunger * 2));
 }
 
-void	routine(t_philo *philo)
+static void	philo_tries_to_eat(t_philo *philo)
+{
+	if (philo->number % 2 != 0)
+	{
+		if (philo->number != 1)
+			philo_takes_fork(philo, philo->number - 2, 0);
+		else
+			philo_takes_fork(philo, philo->max_number - 1, 0);
+		if (philo->max_number != 1)
+			philo_takes_fork(philo, philo->number - 1, 1);
+	}
+	else
+	{
+		philo_takes_fork(philo, philo->number - 1, 1);
+		philo_takes_fork(philo, philo->number - 2, 0);
+	}
+}
+
+static void	routine(t_philo *philo)
 {
 	while (1)
 	{
@@ -30,12 +48,12 @@ void	routine(t_philo *philo)
 			pthread_mutex_unlock(&philo->table->mutex);
 			return ;
 		}
-		else if (philo->fork[0] == 1)
+		else if (philo->fork[0] && philo->fork[1])
 		{
 			pthread_mutex_unlock(&philo->table->mutex);
 			philo_eats(philo);
 		}
-		else if (philo->fork[0] == 0)
+		else if (!philo->fork[0])
 		{
 			pthread_mutex_unlock(&philo->table->mutex);
 			philo_tries_to_eat(philo);

@@ -12,13 +12,13 @@
 
 #include "philo.h"
 
-void	jumpstart(t_table *table)
+static void	jumpstart(t_table *table)
 {
-	int			i;
-	int		time;
+	int		i;
+	long	time;
 
 	i = -1;
-	while (++i < table->p_nb)
+	while (++i < table->nb_of_philos)
 	{
 		table->philo[i].birth_time = table->start_time;
 		time = get_time(&table->philo[i]);
@@ -61,13 +61,14 @@ int	threads_creator(t_table *table)
 	error_msg = "Error: Something went wrong while creating a thread\n";
 	i = -1;
 	pthread_mutex_lock(&table->mutex);
-	while (++i < table->p_nb)
+	while (++i < table->nb_of_philos)
 	{
 		if (pthread_create(&table->philo[i].soul, NULL, \
 		&philo_life, &table->philo[i]) != 0)
 		{
 			write(2, error_msg, 53);
-			kill_all_philos(table);
+			table->exit = 1;
+			table->nb_of_philos = i;
 			pthread_mutex_unlock(&table->mutex);
 			return (0);
 		}

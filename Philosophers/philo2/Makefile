@@ -1,7 +1,7 @@
 NAME= philo
 
 CC= cc
-CFLAGS= -Wall -Werror -Wextra -pthread -g -fsanitize=thread
+CFLAGS= -Wall -Werror -Wextra #-pthread -g -fsanitize=thread
 
 SRC= $(addprefix sources/, $(SOURCES))
 SOURCES= main.c parser.c philo_actions.c philo_utils.c philosophers.c threads.c

@@ -12,31 +12,35 @@
 
 #include "philo.h"
 
-static void clock_time(t_table *table)
+static long	clock_time(t_table *table)
 {
 	gettimeofday((struct timeval *)table->clock, NULL);
 	return (((table->clock->sec * 1000000 + \
 	table->clock->mil_sec) - table->start_time) / 1000);
 }
 
-static void	health_monitor(t_table *table)
+static void	health_monitor(t_table *table, int i, int full_bellies, long time)
 {
-	int		i;
-	long	time;
-
-	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&table->philo[i]->mutex);
+		pthread_mutex_lock(&table->philo[i].mutex);
 		time = clock_time(table);
-		if (time >= table->philo[i]->deadline)
+		if (time >= table->philo[i].life_deadline && !table->philo[i].full)
 		{
-			pthread_mutex_unlock(&table->philo[i]->mutex);
+			pthread_mutex_unlock(&table->philo[i].mutex);
 			break ;
 		}
-		pthread_mutex_unlock(&table->philo[i]->mutex);
+		if (table->philo[i].full)
+			full_bellies++;
+		pthread_mutex_unlock(&table->philo[i].mutex);
 		i++;
-		if (i == table->p_nb)
+		if (i == table->nb_of_philos)
+		{
+			if (full_bellies == table->nb_of_philos)
+				return ;
+			full_bellies = 0;
+			i = 0;
+		}
 	}
 	pthread_mutex_lock(&table->mutex);
 	printf("%li %i died\n", time, i + 1);
@@ -51,7 +55,7 @@ static void	mutexes_handler(t_table *table, char mode)
 	i = -1;
 	if (mode == 'c')
 	{
-		while (++i < table->p_nb)
+		while (++i < table->nb_of_philos)
 		{
 			pthread_mutex_init(&table->fork[i].mutex, NULL);
 			pthread_mutex_init(&table->philo[i].mutex, NULL);
@@ -60,7 +64,7 @@ static void	mutexes_handler(t_table *table, char mode)
 	}
 	else if (mode == 'd')
 	{
-		while (++i < table->p_nb)
+		while (++i < table->nb_of_philos)
 		{
 			pthread_mutex_destroy(&table->fork[i].mutex);
 			pthread_mutex_destroy(&table->philo[i].mutex);
@@ -92,10 +96,11 @@ int	main(int argc, char **argv)
 		return (0);
 	mutexes_handler(&table, 'c');
 	if (!threads_creator(&table))
-		return (end_program(&table, table.p_nb));
-	health_monitor(table);
-	if (!threads_joiner(&table, table.p_nb))
-		return (end_program(&table, table.p_nb));
-	end_program(&table, table.p_nb);
+		return (threads_joiner(&table, table.nb_of_philos), \
+		end_program(&table, table.nb_of_philos));
+	health_monitor(&table, 0, 0, 0);
+	if (!threads_joiner(&table, table.nb_of_philos))
+		return (end_program(&table, table.nb_of_philos));
+	end_program(&table, table.nb_of_philos);
 	return (0);
 }

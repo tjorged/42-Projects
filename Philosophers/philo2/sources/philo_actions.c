@@ -12,19 +12,55 @@
 
 #include "philo.h"
 
-void	better_usleep(t_philo *philo, long deadline)
+static void	philo_thinks(t_philo *philo)
 {
-	while (get_time(philo) < deadline)
-		usleep(500);
+	long	time;
+
+	pthread_mutex_lock(&philo->table->mutex);
+	time = get_time(philo);
+	if (!send_msg(philo, "is thinking", time))
+	{
+		pthread_mutex_unlock(&philo->table->mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->table->mutex);
+	better_usleep(philo, time + philo->thinkingness);
 }
 
-void	leaves_both_forks(t_philo *philo)
+static void	leaves_both_forks(t_philo *philo)
 {
-	philo_puts_fork(philo, philo->number - 1, 1);
+	philo_leaves_fork(philo, philo->number - 1, 1);
 	if (philo->number != 1)
-		philo_puts_fork(philo, philo->number - 2, 0);
+		philo_leaves_fork(philo, philo->number - 2, 0);
 	else
-		philo_puts_fork(philo, philo->max_number - 1, 0);
+		philo_leaves_fork(philo, philo->max_number - 1, 0);
+}
+
+static void	philo_sleeps(t_philo *philo)
+{
+	long	time;
+
+	pthread_mutex_lock(&philo->table->mutex);
+	time = get_time(philo);
+	philo->meals_left--;
+	leaves_both_forks(philo);
+	if (philo->meals_left == 0)
+	{
+		philo->exit = 1;
+		pthread_mutex_lock(&philo->mutex);
+		philo->full = 1;
+		pthread_mutex_unlock(&philo->mutex);
+		pthread_mutex_unlock(&philo->table->mutex);
+		return ;
+	}
+	if (!send_msg(philo, "is sleeping", time))
+	{
+		pthread_mutex_unlock(&philo->table->mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->table->mutex);
+	better_usleep(philo, time + philo->sleepiness);
+	philo_thinks(philo);
 }
 
 void	philo_eats(t_philo *philo)
@@ -38,49 +74,11 @@ void	philo_eats(t_philo *philo)
 	pthread_mutex_unlock(&philo->mutex);
 	if (!send_msg(philo, "is eating", time))
 	{
+		leaves_both_forks(philo);
 		pthread_mutex_unlock(&philo->table->mutex);
 		return ;
 	}
 	pthread_mutex_unlock(&philo->table->mutex);
 	better_usleep(philo, time + philo->hunger);
-	philo_sleeps(philo, get_time(philo));
-}
-
-void	philo_sleeps(t_philo *philo)
-{
-	long	time;
-
-	pthread_mutex_lock(&philo->table->mutex);
-	time = get_time(philo);
-	philo->meals_left--;
-	leaves_both_forks(philo);
-	if (!philo->meals_left)
-	{
-		philo->exit = 1;
-		pthread_mutex_unlock(&philo->table->mutex);
-		return ;
-	}
-	if (!send_msg(philo, "is sleeping", time))
-	{
-		pthread_mutex_unlock(&philo->table->mutex);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->table->mutex);
-	better_usleep(philo, time + philo->sleepiness);
-	philo_thinks(philo, get_time(philo));
-}
-
-void	philo_thinks(t_philo *philo)
-{
-	long	time;
-
-	pthread_mutex_lock(&philo->table->mutex);
-	time = get_time(philo);
-	(!send_msg(philo, "is thinking", time))
-	{
-		pthread_mutex_unlock(&philo->table->mutex);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->table->mutex);
-	better_usleep(philo, time + philo->thinkingness);
+	philo_sleeps(philo);
 }

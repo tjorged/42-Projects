@@ -66,15 +66,16 @@ static int	arguments_validator(int argc, char **argv)
 static int	value_initializer(t_table *table, int i)
 {
 	table->philo[i].number = i + 1;
-	table->philo[i].max_number = table->p_nb;
+	table->philo[i].max_number = table->nb_of_philos;
 	table->philo[i].hp = table->tt_die;
 	table->philo[i].exit = 0;
+	table->philo[i].full = 0;
 	table->philo[i].hunger = table->tt_eat;
 	table->philo[i].meals_left = table->eating_times;
 	table->philo[i].fork[0] = 0;
 	table->philo[i].fork[1] = 0;
 	table->philo[i].sleepiness = table->tt_sleep;
-	if (table->p_nb % 2 == 0)
+	if (table->nb_of_philos % 2 == 0)
 		table->philo[i].thinkingness = table->tt_eat - table->tt_sleep;
 	else
 		table->philo[i].thinkingness = (table->tt_eat * 2 - table->tt_sleep);
@@ -91,17 +92,17 @@ static int	conception(t_table *table)
 {
 	int	i;
 
-	table->philo = malloc(sizeof(t_philo) * table->p_nb);
+	table->philo = malloc(sizeof(t_philo) * table->nb_of_philos);
 	if (!table->philo)
 		return (0);
-	table->fork = malloc(sizeof(t_fork) * table->p_nb);
+	table->fork = malloc(sizeof(t_fork) * table->nb_of_philos);
 	if (!table->fork)
 		return (free (table->philo), 0);
 	table->clock = malloc(sizeof(t_timeval));
 	if (!table->clock)
 		return (free(table->philo), free(table->fork), 0);
 	i = -1;
-	while (++i < table->p_nb)
+	while (++i < table->nb_of_philos)
 	{
 		if (!value_initializer(table, i))
 			return (0);
@@ -117,12 +118,16 @@ int	parser(t_table *table, int argc, char **argv)
 		write(2, "Error: Too many arguments\n", 27);
 	if ((argc < 5 || argc > 6) || !arguments_validator(argc, argv))
 		return (0);
-	table->p_nb = ft_atoi(argv[1]);
+	table->nb_of_philos = ft_atoi(argv[1]);
 	table->tt_die = ft_atoi(argv[2]);
 	table->tt_eat = ft_atoi(argv[3]);
 	table->tt_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
+	{
 		table->eating_times = ft_atoi(argv[5]);
+		if (table->eating_times == 0)
+			write (2, "Error: Invalid arguments\n", 26);
+	}
 	else
 		table->eating_times = -1;
 	if (!conception(table))
